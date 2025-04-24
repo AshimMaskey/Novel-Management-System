@@ -74,3 +74,49 @@ export const handleSignUp = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleLogin = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    if (!username || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+
+    generateTokenAndSetCookie(res, user._id);
+    return res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      fullName: user.fullName,
+      email: user.email,
+      profileImg: user.profileImg,
+      coverImg: user.coverImg,
+      bookmarks: user.bookmarks,
+      status: user.status,
+      role: user.role,
+      bio: user.bio,
+    });
+  } catch (error) {
+    console.error("Error in handleLogin controller: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleLogout = async (req, res) => {
+  try {
+    res.clearCookie("jwt");
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in handleLogout controller: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
