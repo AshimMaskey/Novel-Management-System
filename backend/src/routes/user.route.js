@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  handleChangePassword,
   handleFollowUnfollowUser,
   handleGetUserProfile,
   handleUpdateProfile,
@@ -17,11 +18,6 @@ router.patch(
   upload.single("image"),
   handleUpdateProfile
 );
-router.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-  res.status(200).json({ imageUrl: req.file.path });
-});
+router.patch("/changePassword", verifyToken, handleChangePassword);
 
 export default router;

@@ -1,3 +1,4 @@
+import bcrypt, { genSalt } from "bcryptjs";
 import User from "../models/user.model.js";
 export const handleGetUserProfile = async (req, res) => {
   try {
@@ -96,6 +97,45 @@ export const handleUpdateProfile = async (req, res) => {
     return res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Error updating user profile controller:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleChangePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user._id;
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: "Please provide all fields" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 characters long",
+      });
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res
+        .status(400)
+        .json({ message: "New password cannot be same as old password" });
+    }
+
+    const genSalt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, genSalt);
+    await User.findByIdAndUpdate(userId, { password: hashedPassword });
+    return res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password controller:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
