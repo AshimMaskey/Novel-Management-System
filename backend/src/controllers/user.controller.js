@@ -60,3 +60,42 @@ export const handleFollowUnfollowUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleUpdateProfile = async (req, res) => {
+  try {
+    const { username, bio, fullName, email, role, status } = req.body;
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let profileImgUrl = user.profileImg;
+    if (req.file) {
+      profileImgUrl = req.file.path;
+    }
+
+    const updatedFields = {
+      username: username || user.username,
+      bio: bio || user.bio,
+      fullName: fullName || user.fullName,
+      email: email || user.email,
+      role: role || user.role,
+      status: status || user.status,
+      password: user.password,
+      profileImg: profileImgUrl,
+      coverImg: user.coverImg,
+      bookmarks: user.bookmarks,
+      followers: user.followers,
+      following: user.following,
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, {
+      new: true,
+    }).select("-password");
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user profile controller:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
