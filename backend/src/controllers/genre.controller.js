@@ -26,4 +26,16 @@ export const handleCreateGenre = async (req, res) => {
 };
 export const handleEditGenre = async (req, res) => {};
 export const handleDeleteGenre = async (req, res) => {};
-export const handleGetAllGenre = async (req, res) => {};
+
+export const handleGetAllGenre = async (req, res) => {
+  try {
+    const genres = await Genre.find({}).sort({ createdAt: -1 });
+    if (!genres) {
+      return res.status(404).json({ message: "No genres found" });
+    }
+    return res.status(200).json(genres);
+  } catch (error) {
+    console.error("Error getting all genres controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
