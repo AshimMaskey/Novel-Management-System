@@ -69,3 +69,11 @@ export const handleGetNovel = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleGetNovels = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error("Error getting novels controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

@@ -6,6 +6,7 @@ import {
   handleGetNovel,
 } from "../controllers/novel.controller.js";
 import upload from "../middlewares/multer.js";
+import checkId from "../middlewares/checkId.js";
 const router = express.Router();
 
 router.post(
@@ -15,6 +16,6 @@ router.post(
   upload.single("image"),
   handleCreateNovel
 );
-router.get("/:id", handleGetNovel);
+router.get("/:id", checkId, handleGetNovel);
 
 export default router;
