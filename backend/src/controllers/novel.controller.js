@@ -1,4 +1,5 @@
 import Novel from "../models/novel.model.js";
+import User from "../models/user.model.js";
 
 export const handleCreateNovel = async (req, res) => {
   try {
@@ -74,6 +75,27 @@ export const handleGetNovels = async (req, res) => {
   try {
   } catch (error) {
     console.error("Error getting novels controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleGetNovelByAuthor = async (req, res) => {
+  try {
+    const authorId = req.params.id;
+    const author = await User.findById(authorId);
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+    if (author.role === "reader") {
+      return res.status(403).json({ message: "This user is not an author" });
+    }
+    const novels = await Novel.find({ author: authorId });
+    if (!novels || novels.length === 0) {
+      return res.status(404).json({ message: "No novels written yet!!" });
+    }
+    return res.status(200).json(novels);
+  } catch (error) {
+    console.error("Error getting novels by author controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
