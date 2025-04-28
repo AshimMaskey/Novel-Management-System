@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import authRoute from "./src/routes/auth.route.js";
 import userRoute from "./src/routes/user.route.js";
 import novelRoute from "./src/routes/novel.route.js";
+import genreRoute from "./src/routes/genre.route.js";
 import connectDB from "./src/utils/connectDB.js";
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/novel", novelRoute);
+app.use("/api/genre", genreRoute);
 
 //server start
 const PORT = process.env.PORT || 8080;
