@@ -1,3 +1,4 @@
+import Genre from "../models/genre.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
 
@@ -96,6 +97,23 @@ export const handleGetNovelByAuthor = async (req, res) => {
     return res.status(200).json(novels);
   } catch (error) {
     console.error("Error getting novels by author controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleGetNovelByGenre = async (req, res) => {
+  try {
+    const genreName = req.params.genreName;
+    const novels = await Novel.find({ genres: genreName }).populate(
+      "author",
+      "username"
+    );
+    if (!novels || novels.length === 0) {
+      return res.status(404).json({ message: "No novels found in this genre" });
+    }
+    return res.status(200).json(novels);
+  } catch (error) {
+    console.error("Error getting novels by genre controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

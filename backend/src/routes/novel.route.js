@@ -5,6 +5,7 @@ import {
   handleCreateNovel,
   handleGetNovel,
   handleGetNovelByAuthor,
+  handleGetNovelByGenre,
 } from "../controllers/novel.controller.js";
 import upload from "../middlewares/multer.js";
 import checkId from "../middlewares/checkId.js";
@@ -19,5 +20,6 @@ router.post(
 );
 router.get("/:id", checkId, handleGetNovel);
 router.get("/author/:id", checkId, handleGetNovelByAuthor);
+router.get("/genre/:genreName", handleGetNovelByGenre);
 
 export default router;
