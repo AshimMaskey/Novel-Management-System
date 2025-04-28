@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const genreSchema = new mongoose.Schema(
   {
-    namme: {
+    name: {
       type: String,
       required: true,
       unique: true,
