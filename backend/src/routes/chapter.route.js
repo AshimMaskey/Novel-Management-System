@@ -18,9 +18,8 @@ router.post(
   authorize("admin", "author"),
   handleCreateChapter
 );
-
-router.get("/", handleGetChapter);
-router.get("/chapters/:id", checkId, handleGetAllChapters);
+router.get("/:id/:chapNumber", checkId, handleGetChapter);
+router.get("/:id", checkId, handleGetAllChapters);
 router.delete(
   "/:id",
   verifyToken,

@@ -52,7 +52,38 @@ export const handleCreateChapter = async (req, res) => {
   }
 };
 
-export const handleGetChapter = async (req, res) => {};
+export const handleGetChapter = async (req, res) => {
+  try {
+    const { id: novelId, chapNumber } = req.params;
+    const chapterNumber = Number(chapNumber);
+
+    if (!Number.isInteger(chapterNumber) || chapterNumber < 1) {
+      return res.status(400).json({ message: "Invalid chapter number" });
+    }
+
+    const chapter = await Chapter.findOne({
+      novel: novelId,
+      chapterNumber: chapterNumber,
+    });
+
+    if (!chapter) return res.status(404).json({ message: "Chapter not found" });
+
+    const previousChapter = await Chapter.findOne({
+      novel: novelId,
+      chapterNumber: chapterNumber - 1,
+    });
+
+    const nextChapter = await Chapter.findOne({
+      novel: novelId,
+      chapterNumber: chapterNumber + 1,
+    });
+
+    return res.status(200).json({ chapter, previousChapter, nextChapter });
+  } catch (error) {
+    console.error("Error in getting chapter controller", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const handleGetAllChapters = async (req, res) => {
   try {
