@@ -26,4 +26,5 @@ const chapterSchema = new mongoose.Schema(
 chapterSchema.index({ novel: 1, chapterNumber: 1 }, { unique: true });
 
 const Chapter = mongoose.model("Chapter", chapterSchema);
+
 export default Chapter;
