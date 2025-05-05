@@ -2,6 +2,7 @@ import Chapter from "../models/chapter.model.js";
 import Comment from "../models/comment.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
+import { handleManageComments } from "../utils/permission.js";
 
 export const handleCreateComment = async (req, res) => {
   try {
@@ -75,6 +76,29 @@ export const handleGetCommentOnNovel = async (req, res) => {
     return res.status(200).json(comments);
   } catch (error) {
     console.error("Error getting all comments in novel controller", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleDeleteComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const comment = await Comment.findById(commentId);
+    if (!comment) return res.status(400).json({ message: "No comment found" });
+
+    const hasPermission = await handleManageComments(commentId, req.user._id);
+    if (!hasPermission)
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to manage this comment!" });
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+    if (!deletedComment)
+      return res
+        .status(400)
+        .json({ message: "Error occurred deleting comment" });
+    return res.status(200).json(deletedComment);
+  } catch (error) {
+    console.error("Error delteting comment controller", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
