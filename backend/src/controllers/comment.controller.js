@@ -69,7 +69,7 @@ export const handleGetCommentOnNovel = async (req, res) => {
 
     const comments = await Comment.find({ novel: novelId })
       .populate("user", "username profileImg")
-      .sort({ createdAt });
+      .sort({ createdAt: -1 });
 
     if (comments.length === 0)
       return res.status(404).json({ message: "No comments yet!" });
@@ -98,7 +98,48 @@ export const handleDeleteComment = async (req, res) => {
         .json({ message: "Error occurred deleting comment" });
     return res.status(200).json(deletedComment);
   } catch (error) {
-    console.error("Error delteting comment controller", error);
+    console.error("Error in deleteting comment controller", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleUpdateComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const comment = await Comment.findById(commentId);
+    if (!comment) return res.status(404).json({ message: "No comment found" });
+
+    const hasPermission = await handleManageComments(commentId, req.user._id);
+
+    if (!hasPermission)
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to manage this comment!" });
+
+    const { content, spoiler } = req.body;
+    const updatedData = {
+      content: content || comment.content,
+      spoiler: typeof spoiler === "boolean" ? spoiler : comment.spoiler,
+    };
+
+    if (content && content.length < 5)
+      return res
+        .status(400)
+        .json({ message: "Comment should be at least 5 characters long" });
+    const updatedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updatedComment)
+      return res
+        .status(400)
+        .json({ message: "Error occurred updating comment" });
+
+    return res.status(200).json(updatedComment);
+  } catch (error) {
+    console.error("Error in updating comment controller", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

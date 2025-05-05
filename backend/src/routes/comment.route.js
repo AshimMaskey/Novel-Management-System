@@ -6,6 +6,7 @@ import {
   handleDeleteComment,
   handleGetCommentOnChapter,
   handleGetCommentOnNovel,
+  handleUpdateComment,
 } from "../controllers/comment.controller.js";
 
 const router = express.Router();
@@ -13,6 +14,9 @@ const router = express.Router();
 router.route("/").post(verifyToken, handleCreateComment);
 router.route("/chapter/:id").get(checkId, handleGetCommentOnChapter);
 router.route("/novel/:id").get(checkId, handleGetCommentOnNovel);
-router.route("/:id").delete(verifyToken, checkId, handleDeleteComment);
+router
+  .route("/:id")
+  .delete(verifyToken, checkId, handleDeleteComment)
+  .patch(verifyToken, checkId, handleUpdateComment);
 
 export default router;
