@@ -50,3 +50,22 @@ export const handleDeleteAllNotifications = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const handleDeleteSingleNotification = async (req, res) => {
+  try {
+    const notificationdId = req.params.id;
+    const notification = await Notification.findById(notificationdId);
+    if (!notification)
+      return res.status(404).json({ message: "Notification not found" });
+
+    const deletedNotificationn = await Notification.findByIdAndDelete(
+      notificationdId
+    );
+    if (!deletedNotificationn)
+      return res.status(400).json({ message: "Error deleting notification" });
+    return res.status(200).json(deletedNotificationn);
+  } catch (error) {
+    console.error("Error deleting single notification controller", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
