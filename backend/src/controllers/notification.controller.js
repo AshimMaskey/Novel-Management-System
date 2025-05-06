@@ -24,3 +24,29 @@ export const handleShowAllNotifications = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const handleDeleteAllNotifications = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const notificationCount = await Notification.countDocuments({
+      receiver: userId.toString(),
+    });
+    if (notificationCount === 0)
+      return res.status(404).json({ message: "No notification to delete." });
+
+    const deletedNotification = await Notification.deleteMany({
+      receiver: userId.toString(),
+    });
+
+    if (deletedNotification.deletedCount === 0)
+      return res.status(400).json({ message: "Error deleting Notifications" });
+
+    return res.status(200).json(deletedNotification);
+  } catch (error) {
+    console.error("Error deleting all notification controller", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
