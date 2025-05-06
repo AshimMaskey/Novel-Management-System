@@ -9,6 +9,7 @@ import novelRoute from "./src/routes/novel.route.js";
 import genreRoute from "./src/routes/genre.route.js";
 import chapterRoute from "./src/routes/chapter.route.js";
 import commentRoute from "./src/routes/comment.route.js";
+import notificationRoute from "./src/routes/notification.route.js";
 import connectDB from "./src/utils/connectDB.js";
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use("/api/novel", novelRoute);
 app.use("/api/genre", genreRoute);
 app.use("/api/chapter", chapterRoute);
 app.use("/api/comment", commentRoute);
+app.use("/api/notification", notificationRoute);
 
 //server start
 const PORT = process.env.PORT || 8080;
