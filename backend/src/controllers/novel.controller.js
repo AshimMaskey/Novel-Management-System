@@ -1,5 +1,4 @@
 import Chapter from "../models/chapter.model.js";
-import Genre from "../models/genre.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
 import { handleManageNovel } from "../utils/permission.js";
