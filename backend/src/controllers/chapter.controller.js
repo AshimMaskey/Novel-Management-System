@@ -119,6 +119,15 @@ export const handleUpdateChapter = async (req, res) => {
     const chapter = await Chapter.findById(chapterId);
     if (!chapter) return res.status(404).json({ message: "Chapter not found" });
 
+    const chapterWithSameNumber = await Chapter.find({
+      novel: chapter.novel,
+      chapterNumber,
+      _id: { $ne: chapterId },
+    });
+    if (chapterWithSameNumber.length > 0) {
+      return res.status(400).json({ message: "Chapter number already exists" });
+    }
+
     const hasPermission = await handleManageChapter(
       chapter.novel,
       req.user._id
