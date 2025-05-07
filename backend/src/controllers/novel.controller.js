@@ -81,6 +81,12 @@ export const handleGetNovel = async (req, res) => {
 
 export const handleGetNovels = async (req, res) => {
   try {
+    const novels = await Novel.find()
+      .populate("author", "username")
+      .sort({ views: -1 });
+    if (novels.length === 0)
+      return res.status(404).json({ message: "No novels found!" });
+    return res.status(200).json(novels);
   } catch (error) {
     console.error("Error getting novels controller:", error);
     res.status(500).json({ message: "Internal server error" });
