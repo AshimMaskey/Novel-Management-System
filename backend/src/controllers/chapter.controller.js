@@ -29,6 +29,11 @@ export const handleCreateChapter = async (req, res) => {
         .status(400)
         .json({ message: "Chapter number must be a positive integer" });
     }
+    const chapter = await Chapter.find({ novel: novelId, chapterNumber });
+    if (chapter.length > 0)
+      return res
+        .status(400)
+        .json({ message: "Chapter number already exists!" });
 
     const hasPermission = await handleManageChapter(novelId, req.user._id);
     if (!hasPermission)
