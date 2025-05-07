@@ -40,3 +40,20 @@ export const handleManageComments = async (commentId, userId) => {
     return false;
   }
 };
+
+export const handleManageNovel = async (novelId, userId) => {
+  try {
+    const novel = await Novel.findById(novelId);
+    if (!novel) return false;
+
+    const user = await User.findById(userId);
+    if (!user) return false;
+
+    return (
+      user.role === "admin" || userId.toString() === novel.author.toString()
+    );
+  } catch (error) {
+    console.error("Error in handleMangeNovel permission", error);
+    return false;
+  }
+};

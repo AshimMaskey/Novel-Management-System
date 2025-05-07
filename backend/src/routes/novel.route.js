@@ -3,6 +3,7 @@ import verifyToken from "../middlewares/verifyToken.js";
 import authorize from "../middlewares/authorize.js";
 import {
   handleCreateNovel,
+  handleDeleteNovel,
   handleGetNovel,
   handleGetNovelByAuthor,
   handleGetNovelByGenre,
@@ -22,5 +23,12 @@ router.post(
 router.get("/:id", checkId, handleGetNovel);
 router.get("/author/:id", checkId, handleGetNovelByAuthor);
 router.get("/genre/:genreName", handleGetNovelByGenre);
+router.delete(
+  "/:id",
+  verifyToken,
+  authorize("author", "admin"),
+  checkId,
+  handleDeleteNovel
+);
 
 export default router;

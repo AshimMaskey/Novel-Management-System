@@ -1,6 +1,8 @@
+import Chapter from "../models/chapter.model.js";
 import Genre from "../models/genre.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
+import { handleManageNovel } from "../utils/permission.js";
 
 export const handleCreateNovel = async (req, res) => {
   try {
@@ -12,6 +14,11 @@ export const handleCreateNovel = async (req, res) => {
     if (!title || !description || !genres || !req.file) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    const novel = await Novel.find({ title });
+    if (!novel.length === 0)
+      return res.status(400).json({ message: "Novel title already exists" });
+
     if (typeof title !== "string" || title.trim().length <= 5) {
       return res.status(400).json({
         message: "Title must be a string with more than 5 characters",
@@ -114,6 +121,29 @@ export const handleGetNovelByGenre = async (req, res) => {
     return res.status(200).json(novels);
   } catch (error) {
     console.error("Error getting novels by genre controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleDeleteNovel = async (req, res) => {
+  try {
+    const novelId = req.params.id;
+    const novel = await Novel.findById(novelId);
+    if (!novel) return res.status(404).json({ message: "Novel not found" });
+
+    const hasPermission = await handleManageNovel(novelId, req.user._id);
+    if (!hasPermission)
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to manage this novel!" });
+
+    await Chapter.deleteMany({ novel: novelId });
+    const deletedNovel = await Novel.findByIdAndDelete(novelId);
+    if (!deletedNovel)
+      return res.status(400).json({ message: "Error deleting the novel" });
+    return res.status(200).json(deletedNovel);
+  } catch (error) {
+    console.error("Error deleting novel controller:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
