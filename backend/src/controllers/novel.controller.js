@@ -1,6 +1,7 @@
 import Chapter from "../models/chapter.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
+import createNotification from "../utils/createNotfication.js";
 import { handleManageNovel } from "../utils/permission.js";
 
 export const handleCreateNovel = async (req, res) => {
@@ -49,6 +50,19 @@ export const handleCreateNovel = async (req, res) => {
     }
 
     //Todo notification to followed user
+    const followers = req.user.followers;
+    if (followers.length > 0) {
+      const notifications = followers.map((follower) =>
+        createNotification({
+          sender: newNovel.author,
+          receiver: follower,
+          type: "newNovel",
+          novel: newNovel._id,
+          message: `${req.user.username} has published a new novel titled "${title}".`,
+        })
+      );
+      await Promise.all(notifications);
+    }
 
     return res.status(201).json(newNovel);
   } catch (error) {
