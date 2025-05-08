@@ -2,6 +2,7 @@ import Chapter from "../models/chapter.model.js";
 import Comment from "../models/comment.model.js";
 import Novel from "../models/novel.model.js";
 import User from "../models/user.model.js";
+import createNotification from "../utils/createNotfication.js";
 import { handleManageComments } from "../utils/permission.js";
 
 export const handleCreateComment = async (req, res) => {
@@ -34,6 +35,17 @@ export const handleCreateComment = async (req, res) => {
       "user",
       "username profileImg role"
     );
+
+    const novel = await Novel.findById(novelId);
+    const chapter = await Chapter.findById(chapterId);
+
+    await createNotification({
+      sender: userId,
+      receiver: novel.author,
+      type: "comment",
+      message: `${user.username} has commented on chapter-${chapter.chapterNumber} of "${novel.title}".`,
+    });
+
     return res.status(201).json(populatedComment);
   } catch (error) {
     console.error("Error creating comment controller", error);
