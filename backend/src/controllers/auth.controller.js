@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
+import createNotification from "../utils/createNotfication.js";
 
 export const handleSignUp = async (req, res) => {
   try {
@@ -56,6 +57,19 @@ export const handleSignUp = async (req, res) => {
     await newUser.save();
     if (newUser) {
       generateTokenAndSetCookie(res, newUser._id);
+
+      //notification
+      const admins = await User.find({ role: "admin" });
+      const notifications = admins.map((admin) =>
+        createNotification({
+          sender: newUser._id,
+          receiver: admin._id,
+          type: "newUserSignUp",
+          message: `New user ${newUser.username} has signed up.`,
+        })
+      );
+      await Promise.all(notifications);
+
       return res.status(201).json({
         _id: newUser._id,
         username: newUser.username,
