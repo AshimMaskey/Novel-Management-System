@@ -16,7 +16,7 @@ export const handleCreateNovel = async (req, res) => {
     }
 
     const novel = await Novel.find({ title });
-    if (!novel.length === 0)
+    if (novel.length > 0)
       return res.status(400).json({ message: "Novel title already exists" });
 
     if (typeof title !== "string" || title.trim().length <= 5) {
