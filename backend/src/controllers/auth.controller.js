@@ -82,7 +82,6 @@ export const handleSignUp = async (req, res) => {
         role: newUser.role,
         bio: newUser.bio,
       });
-      //Todo send notification to the admin for new user signup
     }
   } catch (error) {
     console.error("Error in handleSignUp controller: ", error);

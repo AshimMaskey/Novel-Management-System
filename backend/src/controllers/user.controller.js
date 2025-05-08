@@ -1,5 +1,7 @@
 import bcrypt, { genSalt } from "bcryptjs";
 import User from "../models/user.model.js";
+import createNotification from "../utils/createNotfication.js";
+
 export const handleGetUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
@@ -52,9 +54,15 @@ export const handleFollowUnfollowUser = async (req, res) => {
       await User.findByIdAndUpdate(recieverId, {
         $addToSet: { followers: senderId },
       });
-      return res.status(200).json({ message: "Followed successfully" });
 
-      //Todo: send notification to the reciever user
+      //notification
+      const notification = await createNotification({
+        sender: senderId,
+        receiver: recieverId,
+        type: "follow",
+        message: `${senderUser.username} followed you.`,
+      });
+      return res.status(200).json({ message: "Followed successfully" });
     }
   } catch (error) {
     console.error("Error following/unfollowing user controller:", error);
