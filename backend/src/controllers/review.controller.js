@@ -1,5 +1,6 @@
 import Novel from "../models/novel.model.js";
 import Review from "../models/review.model.js";
+import createNotification from "../utils/createNotfication.js";
 
 export const handleCreateReview = async (req, res) => {
   try {
@@ -48,6 +49,14 @@ export const handleCreateReview = async (req, res) => {
     if (!newReview) {
       return res.status(400).json({ message: "Failed to create review" });
     }
+
+    await createNotification({
+      sender: userId,
+      receiver: novel.author,
+      type: "review",
+      message: `${req.user.username} has reviewed your novel ${novel.title}`,
+    });
+
     return res.status(201).json(newReview);
   } catch (error) {
     console.error("Error creating review controller:", error);
