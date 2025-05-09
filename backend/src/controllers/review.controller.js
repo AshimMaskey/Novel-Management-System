@@ -55,7 +55,54 @@ export const handleCreateReview = async (req, res) => {
   }
 };
 
-export const handleUpdateReview = async (req, res) => {};
+export const handleUpdateReview = async (req, res) => {
+  try {
+    const reviewId = req.params.id;
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    if (
+      review.user.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const { rating, review: reviewText } = req.body;
+    if (!rating && !reviewText) {
+      return res
+        .status(400)
+        .json({ message: "Rating or review text is required" });
+    }
+
+    if (rating && (rating < 1 || rating > 5)) {
+      return res
+        .status(400)
+        .json({ message: "Rating must be between 1 and 5" });
+    }
+    if (reviewText && (reviewText.length < 10 || reviewText.length > 200)) {
+      return res
+        .status(400)
+        .json({ message: "Review must be between 10 and 200 characters" });
+    }
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      reviewId,
+      { rating, review: reviewText },
+      { new: true }
+    );
+    if (!updatedReview) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    return res.status(200).json(updatedReview);
+  } catch (error) {
+    console.error("Error updating review controller:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const handleGetReview = async (req, res) => {
   try {
