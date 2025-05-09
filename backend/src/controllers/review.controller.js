@@ -3,6 +3,7 @@ import Review from "../models/review.model.js";
 
 export const handleCreateReview = async (req, res) => {};
 export const handleUpdateReview = async (req, res) => {};
+
 export const handleGetReview = async (req, res) => {
   try {
     const novelId = req.params.id;
@@ -25,4 +26,29 @@ export const handleGetReview = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-export const handleDeleteReview = async (req, res) => {};
+
+export const handleDeleteReview = async (req, res) => {
+  try {
+    const reviewId = req.params.id;
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+    if (
+      review.user.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+    if (!deletedReview) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    return res.status(200).json(deletedReview);
+  } catch (error) {
+    console.error("Error deleting review controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
