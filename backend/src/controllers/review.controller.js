@@ -190,8 +190,30 @@ export const handleDeleteReview = async (req, res) => {
     if (!deletedReview) {
       return res.status(404).json({ message: "Review not found" });
     }
+    const novel = await Novel.findById(review.novel);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+    let newAverageRating = 0;
+    if (novel.reviewCount > 1) {
+      newAverageRating = (
+        (novel.averageRating * novel.reviewCount - review.rating) /
+        (novel.reviewCount - 1)
+      ).toFixed(1);
+    }
 
-    return res.status(200).json(deletedReview);
+    const updatedNovel = await Novel.findByIdAndUpdate(
+      review.novel,
+      {
+        $inc: { reviewCount: -1 },
+        $set: {
+          averageRating: newAverageRating,
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({ updatedNovel, deletedReview });
   } catch (error) {
     console.error("Error deleting review controller:", error);
     return res.status(500).json({ message: "Internal server error" });
