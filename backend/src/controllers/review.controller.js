@@ -22,8 +22,8 @@ export const handleCreateReview = async (req, res) => {
         .json({ message: "You have already reviewed this novel" });
     }
 
-    const { rating, review } = req.body;
-    if (!rating || !review) {
+    const { rating, review: reviewText } = req.body;
+    if (!rating || !reviewText) {
       return res
         .status(400)
         .json({ message: "Rating and review are required" });
@@ -34,7 +34,7 @@ export const handleCreateReview = async (req, res) => {
         .status(400)
         .json({ message: "Rating must be between 1 and 5" });
     }
-    if (review.length < 10 || review.length > 200) {
+    if (reviewText.length < 10 || reviewText.length > 200) {
       return res
         .status(400)
         .json({ message: "Review must be between 10 and 200 characters" });
@@ -44,11 +44,25 @@ export const handleCreateReview = async (req, res) => {
       novel: novelId,
       user: userId,
       rating,
-      review,
+      review: reviewText,
     });
     if (!newReview) {
       return res.status(400).json({ message: "Failed to create review" });
     }
+
+    const updatedNovel = await Novel.findByIdAndUpdate(
+      novelId,
+      {
+        $inc: { reviewCount: 1 },
+        $set: {
+          averageRating: (
+            (novel.averageRating * novel.reviewCount + rating) /
+            (novel.reviewCount + 1)
+          ).toFixed(1),
+        },
+      },
+      { new: true }
+    );
 
     await createNotification({
       sender: userId,
@@ -57,7 +71,7 @@ export const handleCreateReview = async (req, res) => {
       message: `${req.user.username} has reviewed your novel ${novel.title}`,
     });
 
-    return res.status(201).json(newReview);
+    return res.status(201).json({ newReview, updatedNovel });
   } catch (error) {
     console.error("Error creating review controller:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -72,6 +86,8 @@ export const handleUpdateReview = async (req, res) => {
       return res.status(404).json({ message: "Review not found" });
     }
 
+    const oldRating = review.rating;
+
     if (
       review.user.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
@@ -80,7 +96,7 @@ export const handleUpdateReview = async (req, res) => {
     }
 
     const { rating, review: reviewText } = req.body;
-    if (!rating && !reviewText) {
+    if (rating == null && reviewText == null) {
       return res
         .status(400)
         .json({ message: "Rating or review text is required" });
@@ -103,10 +119,30 @@ export const handleUpdateReview = async (req, res) => {
       { new: true }
     );
     if (!updatedReview) {
-      return res.status(404).json({ message: "Review not found" });
+      return res.status(404).json({ message: "Review not updated" });
+    }
+    const novel = await Novel.findById(review.novel);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+    let updatedNovel = null;
+
+    if (rating !== undefined && rating !== oldRating) {
+      updatedNovel = await Novel.findByIdAndUpdate(
+        review.novel,
+        {
+          $set: {
+            averageRating: (
+              (novel.averageRating * novel.reviewCount - oldRating + rating) /
+              novel.reviewCount
+            ).toFixed(1),
+          },
+        },
+        { new: true }
+      );
     }
 
-    return res.status(200).json(updatedReview);
+    return res.status(200).json({ updatedReview, updatedNovel });
   } catch (error) {
     console.error("Error updating review controller:", error);
     return res.status(500).json({ message: "Internal server error" });
