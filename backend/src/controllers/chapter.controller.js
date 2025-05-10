@@ -1,5 +1,7 @@
 import Chapter from "../models/chapter.model.js";
 import Novel from "../models/novel.model.js";
+import User from "../models/user.model.js";
+import createNotification from "../utils/createNotfication.js";
 import { handleManageChapter } from "../utils/permission.js";
 
 export const handleCreateChapter = async (req, res) => {
@@ -48,7 +50,22 @@ export const handleCreateChapter = async (req, res) => {
       content,
     });
 
-    //Todo notification to the bookmarked user
+    // notification to the bookmarked user
+    const bookmarkedUsers = await User.find({ bookmarks: novelId });
+    if (bookmarkedUsers.length > 0) {
+      const novel = await Novel.findById(novelId);
+      const notifications = bookmarkedUsers.map((user) =>
+        createNotification({
+          sender: req.user._id,
+          receiver: user._id,
+          type: "newChapter",
+          chapter: newChapter._id,
+          message: `New chapter ${newChapter.chapterNumber} of ${novel.title} is available`,
+          novel: novelId,
+        })
+      );
+      await Promise.all(notifications);
+    }
 
     return res.status(201).json(newChapter);
   } catch (error) {

@@ -49,7 +49,7 @@ export const handleCreateNovel = async (req, res) => {
       return res.status(400).json({ message: "Failed to create novel" });
     }
 
-    //Todo notification to followed user
+    // notification to followed user
     const followers = req.user.followers;
     if (followers.length > 0) {
       const notifications = followers.map((follower) =>
