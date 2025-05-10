@@ -9,6 +9,7 @@ import {
   handleGetNovelByGenre,
   handleGetNovels,
   handleSearchNovel,
+  handleUpdateNovel,
 } from "../controllers/novel.controller.js";
 import upload from "../middlewares/multer.js";
 import checkId from "../middlewares/checkId.js";
@@ -34,5 +35,13 @@ router.delete(
   handleDeleteNovel
 );
 router.route("/search").get(handleSearchNovel);
+router.patch(
+  "/:id",
+  verifyToken,
+  authorize("author", "admin"),
+  upload.single("image"),
+  checkId,
+  handleUpdateNovel
+);
 
 export default router;

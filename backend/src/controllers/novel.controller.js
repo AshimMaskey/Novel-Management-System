@@ -188,3 +188,84 @@ export const handleSearchNovel = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleUpdateNovel = async (req, res) => {
+  try {
+    const novelId = req.params.id;
+    const userId = req.user._id;
+
+    const existingNovel = await Novel.findById(novelId);
+    if (!existingNovel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+
+    if (
+      existingNovel.author.toString() !== userId.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this novel" });
+    }
+
+    const { title, description, status } = req.body;
+    const genres = req.body.genres ? JSON.parse(req.body.genres) : undefined;
+
+    const updateData = {};
+
+    if (title) {
+      if (typeof title !== "string" || title.trim().length <= 5) {
+        return res.status(400).json({
+          message: "Title must be a string with more than 5 characters",
+        });
+      }
+
+      const titleExists = await Novel.findOne({ title, _id: { $ne: novelId } });
+      if (titleExists) {
+        return res
+          .status(400)
+          .json({ message: "Title already in use by another novel" });
+      }
+
+      updateData.title = title;
+    }
+
+    if (description) {
+      if (typeof description !== "string" || description.trim().length < 10) {
+        return res.status(400).json({
+          message: "Description must be at least 10 characters long",
+        });
+      }
+      updateData.description = description;
+    }
+
+    if (genres) {
+      if (!Array.isArray(genres) || genres.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "At least one genre is required" });
+      }
+      updateData.genres = genres;
+    }
+
+    if (req.file) {
+      updateData.image = req.file.path;
+    }
+
+    if (status) {
+      if (!["ongoing", "completed"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status value" });
+      }
+      updateData.status = status;
+    }
+
+    const updatedNovel = await Novel.findByIdAndUpdate(novelId, updateData, {
+      new: true,
+    });
+
+    return res.status(200).json(updatedNovel);
+  } catch (error) {
+    console.error("Error updating novel:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
