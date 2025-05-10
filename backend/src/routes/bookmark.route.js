@@ -9,6 +9,6 @@ import {
 const router = express.Router();
 
 router.route("/:id").patch(verifyToken, checkId, handleAddRemoveBookmark);
-router.route("/", verifyToken, handleGetBookmark);
+router.route("/").get(verifyToken, handleGetBookmark);
 
 export default router;
