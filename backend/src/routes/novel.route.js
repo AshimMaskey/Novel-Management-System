@@ -8,6 +8,7 @@ import {
   handleGetNovelByAuthor,
   handleGetNovelByGenre,
   handleGetNovels,
+  handleSearchNovel,
 } from "../controllers/novel.controller.js";
 import upload from "../middlewares/multer.js";
 import checkId from "../middlewares/checkId.js";
@@ -32,5 +33,6 @@ router.delete(
   checkId,
   handleDeleteNovel
 );
+router.route("/search").get(handleSearchNovel);
 
 export default router;

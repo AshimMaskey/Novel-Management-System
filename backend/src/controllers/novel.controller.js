@@ -166,3 +166,25 @@ export const handleDeleteNovel = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleSearchNovel = async (req, res) => {
+  try {
+    const searchQuery = req.query.search;
+
+    if (!searchQuery) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const novels = await Novel.find({
+      title: { $regex: searchQuery, $options: "i" },
+    }).populate("author", "username");
+
+    if (novels.length === 0) {
+      return res.status(404).json({ message: "No novels found" });
+    }
+    return res.status(200).json(novels);
+  } catch (error) {
+    console.error("Error searching novel controller:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
