@@ -5,6 +5,9 @@ import BookmarksPage from "./pages/bookmarks/BookmarksPage";
 import BrowsePage from "./pages/browse/BrowsePage";
 import CreatePage from "./pages/create/CreatePage";
 import { ThemeProvider } from "./components/ui/theme-provider";
+import ProfilePage from "./pages/profile/ProfilePage";
+import NotificationPage from "./pages/notification/NotificationPage";
+import SearchPage from "./pages/search/SearchPage";
 const App = () => {
   return (
     <>
@@ -15,6 +18,9 @@ const App = () => {
             <Route path="/create" element={<CreatePage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/browse" element={<BrowsePage />} />
+            <Route path="/notifications" element={<NotificationPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </ThemeProvider>
