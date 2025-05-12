@@ -4,8 +4,13 @@ import { Link, NavLink } from "react-router-dom";
 import { BsBrowserSafari } from "react-icons/bs";
 import { FaPenNib } from "react-icons/fa";
 import { IoBookmarks } from "react-icons/io5";
+import { FiSearch } from "react-icons/fi";
+import { useTheme } from "@/components/ui/theme-provider";
+import { Moon, Sun } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
+  const { setTheme, theme } = useTheme();
   return (
     <>
       <div className="border-b-2 py-1 border-border">
@@ -56,9 +61,24 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          <div>
-            <div></div>
-            <div></div>
+          <div className="flex items-center gap-x-5">
+            <div className="text-2xl hover:text-primary hover:cursor-pointer">
+              <FiSearch />
+            </div>
+            <div className="text-2xl hover:text-primary hover:cursor-pointer">
+              <NotificationBell count={2} />
+            </div>
+            <div>
+              {" "}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                <Sun className="size-6 dark:hidden" />
+                <Moon className="size-6 hidden dark:block" />
+              </Button>
+            </div>
             <div>
               <Button className="font-semibold" variant={"default"}>
                 Sign Up

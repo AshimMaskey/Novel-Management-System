@@ -4,17 +4,20 @@ import MainLayout from "./layouts/MainLayout";
 import BookmarksPage from "./pages/bookmarks/BookmarksPage";
 import BrowsePage from "./pages/browse/BrowsePage";
 import CreatePage from "./pages/create/CreatePage";
+import { ThemeProvider } from "./components/ui/theme-provider";
 const App = () => {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="/create" element={<CreatePage />} />
-          <Route path="/bookmarks" element={<BookmarksPage />} />
-          <Route path="/browse" element={<BrowsePage />} />
-        </Route>
-      </Routes>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/create" element={<CreatePage />} />
+            <Route path="/bookmarks" element={<BookmarksPage />} />
+            <Route path="/browse" element={<BrowsePage />} />
+          </Route>
+        </Routes>
+      </ThemeProvider>
     </>
   );
 };
