@@ -1,0 +1,24 @@
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+
+const PageNotFound = () => {
+  return (
+    <section className="flex items-center py-30 bg-gray-50 dark:bg-gray-700">
+      <div className="container flex flex-col items-center ">
+        <div className="flex flex-col gap-6 max-w-md text-center">
+          <h2 className=" text-9xl text-gray-600 dark:text-gray-100">
+            <span className="sr-only">Error</span>404
+          </h2>
+          <p className="text-2xl md:text-3xl dark:text-gray-300">
+            Sorry, we couldn't find this page.
+          </p>
+          <Link to="/">
+            <Button>Back to homepage </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PageNotFound;

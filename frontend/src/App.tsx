@@ -8,6 +8,8 @@ import { ThemeProvider } from "./components/ui/theme-provider";
 import ProfilePage from "./pages/profile/ProfilePage";
 import NotificationPage from "./pages/notification/NotificationPage";
 import SearchPage from "./pages/search/SearchPage";
+import LoginPage from "./pages/LoginPage";
+import PageNotFound from "./pages/PageNotFound";
 const App = () => {
   return (
     <>
@@ -21,7 +23,9 @@ const App = () => {
             <Route path="/notifications" element={<NotificationPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="*" element={<PageNotFound />} />
           </Route>
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </ThemeProvider>
     </>

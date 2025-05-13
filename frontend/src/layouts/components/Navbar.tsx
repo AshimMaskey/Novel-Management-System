@@ -113,9 +113,11 @@ const Navbar = () => {
               </Button>
             </div>
             <div>
-              <Button className="font-semibold" variant={"default"}>
-                Sign Up
-              </Button>
+              <Link to="/login">
+                <Button className="font-semibold" variant={"default"}>
+                  Sign In
+                </Button>
+              </Link>
             </div>
             {/* <div className="hover:cursor-pointer">
               <Avatar>
@@ -221,12 +223,14 @@ const Navbar = () => {
                     Toggle Theme
                   </Button>
 
-                  <Button
-                    className="w-full mt-2"
-                    onClick={() => setOpen(false)}
-                  >
-                    Sign Up
-                  </Button>
+                  <Link to="/login">
+                    <Button
+                      className="w-full mt-2"
+                      onClick={() => setOpen(false)}
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
                 </div>
               </SheetContent>
             </Sheet>
