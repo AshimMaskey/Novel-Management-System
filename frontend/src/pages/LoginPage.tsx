@@ -29,6 +29,7 @@ const LoginPage = () => {
       setError("Please fill in all fields.");
       return;
     }
+    console.log("Form submitted:", formData);
   };
 
   return (
