@@ -11,37 +11,85 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-interface LoginData {
+interface SignUpData {
   username: string;
   password: string;
+  email: string;
+  fullName: string;
 }
 
-const LoginPage = () => {
+const SignUpPage = () => {
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<LoginData>({
+  const [formData, setFormData] = useState<SignUpData>({
     username: "",
     password: "",
+    email: "",
+    fullName: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.username.trim() || !formData.password.trim()) {
+    if (
+      !formData.username ||
+      !formData.password ||
+      !formData.fullName ||
+      !formData.email
+    ) {
       setError("Please fill in all fields.");
       return;
     }
+
+    if (!/^[A-Za-z\s]+$/.test(formData.fullName)) {
+      setError("Full name must contain only letters and spaces.");
+      return;
+    }
+
+    if (!/^[a-zA-Z][a-zA-Z0-9_]{2,19}$/.test(formData.username)) {
+      setError(
+        "Username must be 3-20 characters long and can only contain letters, numbers, and underscores."
+      );
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     console.log("Form submitted:", formData);
   };
 
   return (
     <>
       <div className="flex items-center justify-center h-screen">
-        <Card className="w-full border-2 max-w-sm">
+        <Card className="w-full sm:m-0 m-4 border-2 max-w-sm">
           <CardHeader className="text-center text-3xl">
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Register</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
-              <div className="mb-5">
+              <div className="mb-2">
+                <Label className="mb-3 text-lg" htmlFor="fullName">
+                  Full Name:
+                </Label>
+                <Input
+                  className="border-2 p-5 border-border"
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter your full name..."
+                  value={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
                 <Label className="mb-3 text-lg" htmlFor="username">
                   Username:
                 </Label>
@@ -54,6 +102,22 @@ const LoginPage = () => {
                   value={formData.username}
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <Label className="mb-3 text-lg" htmlFor="email">
+                  Email:
+                </Label>
+                <Input
+                  className="border-2 p-5 border-border"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email..."
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
                   }
                 />
               </div>
@@ -81,10 +145,10 @@ const LoginPage = () => {
           </CardContent>
           <CardFooter>
             <p>
-              Doesn't have an account?
+              Already have an account?
               <span className="underline text-primary">
                 {" "}
-                <Link to="/signup">Sign Up</Link>
+                <Link to="/login">Sign In</Link>
               </span>
             </p>
           </CardFooter>
@@ -94,4 +158,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;

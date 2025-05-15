@@ -10,6 +10,7 @@ import NotificationPage from "./pages/notification/NotificationPage";
 import SearchPage from "./pages/search/SearchPage";
 import LoginPage from "./pages/LoginPage";
 import PageNotFound from "./pages/PageNotFound";
+import SignUpPage from "./pages/SignUpPage";
 const App = () => {
   return (
     <>
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="*" element={<PageNotFound />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </ThemeProvider>
     </>
