@@ -1,6 +1,6 @@
 import express from "express";
-import verifyToken from "../middlewares/verifyToken";
-import checkId from "../middlewares/checkId";
+import verifyToken from "../middlewares/verifyToken.js";
+import checkId from "../middlewares/checkId.js";
 import {
   handleCreateReview,
   handleDeleteReview,

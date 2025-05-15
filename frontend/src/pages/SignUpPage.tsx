@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface SignUpData {
   username: string;
@@ -20,6 +21,7 @@ interface SignUpData {
 
 const SignUpPage = () => {
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<SignUpData>({
     username: "",
     password: "",
@@ -121,13 +123,13 @@ const SignUpPage = () => {
                   }
                 />
               </div>
-              <div className="mb-2">
+              <div className="mb-2 relative">
                 <Label className="mb-3 text-lg" htmlFor="password">
                   Password:
                 </Label>
                 <Input
                   className="border-2 p-5 border-border"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   placeholder="Enter your password..."
@@ -136,10 +138,22 @@ const SignUpPage = () => {
                     setFormData({ ...formData, password: e.target.value })
                   }
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-[52px] text-gray-500"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? (
+                    <FaEyeSlash size={20} />
+                  ) : (
+                    <FaEye size={20} />
+                  )}
+                </button>
               </div>
               <span className="text-destructive">{error}</span>
               <Button type="submit" className="w-full mt-3">
-                Login
+                Sign Up
               </Button>
             </form>
           </CardContent>

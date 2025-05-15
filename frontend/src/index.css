@@ -172,6 +172,12 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
+@layer utilities {
+  .containerBox {
+    @apply max-w-5xl mx-auto;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
