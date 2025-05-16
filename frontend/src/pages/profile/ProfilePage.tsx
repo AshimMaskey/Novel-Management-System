@@ -1,9 +1,9 @@
 import profileCover from "@/assets/profileCover.jfif";
 import avatarImage from "@/assets/avatar.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { CiEdit } from "react-icons/ci";
 import { Button } from "@/components/ui/button";
 import { CiUser } from "react-icons/ci";
+import EditModal from "./components/EditModal";
 const ProfilePage = () => {
   return (
     <>
@@ -22,12 +22,7 @@ const ProfilePage = () => {
             />
           </Avatar>
           <div className="flex justify-between text-lg mt-5">
-            <div>
-              <Button variant={"outline"}>
-                <CiEdit />
-                <span className="ml-1 hidden sm:flex">Edit</span>
-              </Button>
-            </div>
+            <EditModal />
             <div>
               <Button variant={"outline"}>
                 <CiUser />
@@ -50,7 +45,7 @@ const ProfilePage = () => {
               ashimmaskey@gmail.com
             </h3>
             <h3 className="text-md font-extralight">
-              <span className="font-extrabold">Bio:</span>
+              <span className="font-extrabold">Bio: </span>
               This person has not added a bio yet.
             </h3>
             <Button variant={"destructive"}>Log Out</Button>
