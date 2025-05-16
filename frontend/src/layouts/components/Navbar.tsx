@@ -32,7 +32,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="hidden md:block">
-            <ul className="flex gap-x-10 font-semibold">
+            <ul className="flex gap-x-10 font-extralight">
               <li>
                 <NavLink
                   className={({ isActive }) =>

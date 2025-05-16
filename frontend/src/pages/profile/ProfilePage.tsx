@@ -1,8 +1,9 @@
 import profileCover from "@/assets/profileCover.jfif";
 import avatarImage from "@/assets/avatar.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { IoSettingsOutline } from "react-icons/io5";
+import { CiEdit } from "react-icons/ci";
 import { Button } from "@/components/ui/button";
+import { CiUser } from "react-icons/ci";
 const ProfilePage = () => {
   return (
     <>
@@ -15,26 +16,44 @@ const ProfilePage = () => {
           />
           <Avatar className="size-48 absolute left-1/2 -translate-x-1/2 -bottom-22 shadow-lg border-4 border-white">
             <AvatarImage
-              className="object-cover"
+              className="object-cover  transition-transform duration-300 hover:scale-110 cursor-pointer"
               src={avatarImage}
               alt="userprofile"
             />
           </Avatar>
-          <div className="flex text-lg mt-5">
+          <div className="flex justify-between text-lg mt-5">
             <div>
               <Button variant={"outline"}>
-                <IoSettingsOutline />
-                <span className="ml-1">Edit Profile</span>
+                <CiEdit />
+                <span className="ml-1 hidden sm:flex">Edit</span>
+              </Button>
+            </div>
+            <div>
+              <Button variant={"outline"}>
+                <CiUser />
+                <span className="ml-1 hidden sm:flex">Followers</span>
               </Button>
             </div>
           </div>
         </div>
-        <div className="containerBox flex flex-col items-center mt-28">
-          <div>
+        <div className="containerBox pb-5 flex flex-col items-center mt-26">
+          <div className="flex flex-col gap-y-2.5">
             <h1 className="font-semibold text-2xl">
               Ashim Maskey{" "}
-              <span className="text-lg font-extralight">(Reader)</span>
+              <span className="text-md italic font-extralight">(Reader)</span>
             </h1>
+            <h3 className="text-md font-extralight">
+              <span className="font-extrabold">Username:</span> ashim123
+            </h3>
+            <h3 className="text-md font-extralight">
+              <span className="font-extrabold">Email:</span>{" "}
+              ashimmaskey@gmail.com
+            </h3>
+            <h3 className="text-md font-extralight">
+              <span className="font-extrabold">Bio:</span>
+              This person has not added a bio yet.
+            </h3>
+            <Button variant={"destructive"}>Log Out</Button>
           </div>
         </div>
       </div>
