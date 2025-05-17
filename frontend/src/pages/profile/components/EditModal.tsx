@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import avatar from "@/assets/avatar.png";
 
 const EditModal = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ const EditModal = () => {
     fullName: "John Doe",
     email: "john@example.com",
     profileImg: null as File | null,
-    preview: "/default-avatar.png", // initial avatar or fallback
+    preview: avatar,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,52 +54,54 @@ const EditModal = () => {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              {/* Profile Image Preview */}
               <div className="flex flex-col items-start gap-2">
-                <Label>Profile Image</Label>
+                <Label className="mb-1 text-sm">Profile Image:</Label>
                 <img
                   src={formData.preview}
-                  alt="Profile Preview"
+                  alt="img"
                   className="w-20 h-20 rounded-full object-cover border"
                 />
                 <Input
+                  className="border-2 border-border"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
               </div>
-
-              {/* Username */}
               <div>
-                <Label htmlFor="username">Username</Label>
+                <Label className="mb-1 text-sm" htmlFor="username">
+                  Username:
+                </Label>
                 <Input
+                  className="border-2 border-border"
                   id="username"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
                 />
               </div>
-
-              {/* Full Name */}
               <div>
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label className="mb-1 text-sm" htmlFor="fullName">
+                  Full Name:
+                </Label>
                 <Input
+                  className="border-2 border-border"
                   id="fullName"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
                 />
               </div>
-
-              {/* Email - Read Only */}
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label className="mb-1 text-sm" htmlFor="email">
+                  Email:
+                </Label>
                 <Input
                   id="email"
                   name="email"
                   value={formData.email}
                   readOnly
-                  className="bg-muted cursor-not-allowed"
+                  className="bg-muted border-2 border-border cursor-not-allowed"
                 />
               </div>
             </div>
