@@ -12,10 +12,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-interface LoginData {
-  username: string;
-  password: string;
-}
+import type { LoginData } from "@/types/auth";
 
 const LoginPage = () => {
   const [error, setError] = useState<string | null>(null);
