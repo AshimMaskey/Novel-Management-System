@@ -13,22 +13,37 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import type { LoginData } from "@/types/auth";
+import { useLoginMutation } from "@/features/auth/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/features/auth/authSlice";
+import type { ApiError } from "@/types/error";
+import LoadingButton from "@/components/ui/LoadingButton";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<LoginData>({
     username: "",
     password: "",
   });
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const dispatch = useDispatch();
+  const [login, { isLoading }] = useLoginMutation();
+  const [error, setError] = useState<string | null>(null);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.username.trim() || !formData.password.trim()) {
       setError("Please fill in all fields.");
       return;
     }
-    console.log("Form submitted:", formData);
+    try {
+      const response = await login(formData).unwrap();
+      toast.success("Login successful!");
+      setError(null);
+      dispatch(setUser(response));
+    } catch (error) {
+      const apiError = error as ApiError;
+      setError(apiError?.data?.message || "An error occurred");
+    }
   };
 
   return (
@@ -80,9 +95,13 @@ const LoginPage = () => {
               </button>
             </div>
             <span className="text-destructive">{error}</span>
-            <Button type="submit" className="w-full mt-3">
-              Login
-            </Button>
+            {isLoading ? (
+              <LoadingButton value="Logging in..." />
+            ) : (
+              <Button type="submit" className="w-full mt-3">
+                Login
+              </Button>
+            )}
           </form>
         </CardContent>
         <CardFooter>

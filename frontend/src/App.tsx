@@ -11,6 +11,7 @@ import SearchPage from "./pages/search/SearchPage";
 import LoginPage from "./pages/LoginPage";
 import PageNotFound from "./pages/PageNotFound";
 import SignUpPage from "./pages/SignUpPage";
+import { Toaster } from "react-hot-toast";
 const App = () => {
   return (
     <>
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </ThemeProvider>
+      <Toaster position="top-center" reverseOrder={false} />
     </>
   );
 };
