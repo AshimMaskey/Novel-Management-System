@@ -4,7 +4,21 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { CiUser } from "react-icons/ci";
 import EditModal from "./components/EditModal";
+import { useLogoutMutation } from "@/features/auth/authApi";
+import toast from "react-hot-toast";
+import type { ApiError } from "@/types/error";
+import { Loader2 } from "lucide-react";
 const ProfilePage = () => {
+  const [logout, { isLoading }] = useLogoutMutation();
+  const handleClick = async () => {
+    try {
+      const response = await logout().unwrap();
+      toast.success(response.message);
+    } catch (error) {
+      const apiError = error as ApiError;
+      toast.error(apiError?.data?.message);
+    }
+  };
   return (
     <>
       <div className="w-full bg-card">
@@ -48,7 +62,16 @@ const ProfilePage = () => {
               <span className="font-extrabold">Bio: </span>
               This person has not added a bio yet.
             </h3>
-            <Button variant={"destructive"}>Log Out</Button>
+            {isLoading ? (
+              <Button disabled variant={"destructive"}>
+                <Loader2 className="animate-spin" />
+                Logging out..
+              </Button>
+            ) : (
+              <Button onClick={handleClick} variant={"destructive"}>
+                Log Out
+              </Button>
+            )}
           </div>
         </div>
       </div>
