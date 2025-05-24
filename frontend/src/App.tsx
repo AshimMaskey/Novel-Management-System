@@ -4,7 +4,6 @@ import MainLayout from "./layouts/MainLayout";
 import BookmarksPage from "./pages/bookmarks/BookmarksPage";
 import BrowsePage from "./pages/browse/BrowsePage";
 import CreatePage from "./pages/create/CreatePage";
-import { ThemeProvider } from "./components/ui/theme-provider";
 import ProfilePage from "./pages/profile/ProfilePage";
 import NotificationPage from "./pages/notification/NotificationPage";
 import SearchPage from "./pages/search/SearchPage";
@@ -13,39 +12,94 @@ import PageNotFound from "./pages/PageNotFound";
 import SignUpPage from "./pages/SignUpPage";
 import { Toaster } from "react-hot-toast";
 import PublicRoute from "./auth/PublicRoute";
+import PrivateRoute from "./auth/PrivateRoute";
+import { useGetUserQuery } from "./features/auth/authApi";
+import Spinner from "./components/ui/Spinner";
+import { useDispatch } from "react-redux";
+import { clearUser, setUser } from "./features/auth/authSlice";
+import { useEffect } from "react";
 const App = () => {
+  const { data, error, isLoading } = useGetUserQuery();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setUser(data));
+    }
+  }, [data, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      dispatch(clearUser());
+    }
+  }, [error, dispatch]);
+
+  if (isLoading)
+    return (
+      <>
+        <div className="bg-background w-screen h-screen flex justify-center items-center">
+          <Spinner />
+        </div>
+      </>
+    );
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/create" element={<CreatePage />} />
-            <Route path="/bookmarks" element={<BookmarksPage />} />
-            <Route path="/browse" element={<BrowsePage />} />
-            <Route path="/notifications" element={<NotificationPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Route>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
           <Route
-            path="/login"
+            path="/create"
             element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
+              <PrivateRoute>
+                <CreatePage />
+              </PrivateRoute>
             }
           />
           <Route
-            path="/signup"
+            path="/bookmarks"
             element={
-              <PublicRoute>
-                <SignUpPage />
-              </PublicRoute>
+              <PrivateRoute>
+                <BookmarksPage />
+              </PrivateRoute>
             }
           />
-        </Routes>
-      </ThemeProvider>
+          <Route path="/browse" element={<BrowsePage />} />
+          <Route
+            path="/notifications"
+            element={
+              <PrivateRoute>
+                <NotificationPage />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/search" element={<SearchPage />} />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUpPage />
+            </PublicRoute>
+          }
+        />
+      </Routes>
       <Toaster position="top-center" reverseOrder={false} />
     </>
   );

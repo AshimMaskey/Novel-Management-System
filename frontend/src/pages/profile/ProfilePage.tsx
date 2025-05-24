@@ -8,12 +8,18 @@ import { useLogoutMutation } from "@/features/auth/authApi";
 import toast from "react-hot-toast";
 import type { ApiError } from "@/types/error";
 import { Loader2 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { clearUser } from "@/features/auth/authSlice";
+
 const ProfilePage = () => {
   const [logout, { isLoading }] = useLogoutMutation();
+  const dispatch = useDispatch();
+
   const handleClick = async () => {
     try {
       const response = await logout().unwrap();
       toast.success(response.message);
+      dispatch(clearUser());
     } catch (error) {
       const apiError = error as ApiError;
       toast.error(apiError?.data?.message);

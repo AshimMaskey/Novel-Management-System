@@ -8,13 +8,18 @@ import { FiSearch } from "react-icons/fi";
 import { useTheme } from "@/components/ui/theme-provider";
 import { Moon, Sun } from "lucide-react";
 import NotificationBell from "./NotificationBell";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RxHamburgerMenu } from "react-icons/rx";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 const Navbar = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
   const { setTheme, theme } = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -112,19 +117,24 @@ const Navbar = () => {
                 <Moon className="size-6 hidden dark:block" />
               </Button>
             </div>
-            <div>
-              <Link to="/login">
-                <Button className="font-semibold" variant={"default"}>
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-            {/* <div className="hover:cursor-pointer">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </div> */}
+            {isAuthenticated ? (
+              <div className="hover:cursor-pointer">
+                <Link to="/profile">
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <Link to="/login">
+                  <Button className="font-semibold" variant={"default"}>
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
           <div className="md:hidden mr-5 text-3xl hover:cursor-pointer">
             <Sheet open={open} onOpenChange={setOpen}>
