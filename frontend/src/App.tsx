@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import PageNotFound from "./pages/PageNotFound";
 import SignUpPage from "./pages/SignUpPage";
 import { Toaster } from "react-hot-toast";
+import PublicRoute from "./auth/PublicRoute";
 const App = () => {
   return (
     <>
@@ -27,8 +28,22 @@ const App = () => {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignUpPage />
+              </PublicRoute>
+            }
+          />
         </Routes>
       </ThemeProvider>
       <Toaster position="top-center" reverseOrder={false} />

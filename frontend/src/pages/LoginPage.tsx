@@ -28,13 +28,16 @@ const LoginPage = () => {
   });
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
+
   const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.username.trim() || !formData.password.trim()) {
       setError("Please fill in all fields.");
       return;
     }
+
     try {
       const response = await login(formData).unwrap();
       toast.success("Login successful!");
