@@ -23,7 +23,7 @@ router.patch(
 router.patch(
   "/updateProfile",
   verifyToken,
-  upload.single("image"),
+  upload.single("profileImg"),
   handleUpdateProfile
 );
 router.patch("/changePassword", verifyToken, handleChangePassword);
