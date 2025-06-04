@@ -15,12 +15,15 @@ import { useUpdateUserMutation } from "@/features/user/userApi";
 import type { ApiError } from "@/types/error";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/features/auth/authSlice";
 
 interface EditProps {
   user: User | GetUser | null;
 }
 
 const EditModal = ({ user }: EditProps) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: user?.username,
     fullName: user?.fullName,
@@ -63,12 +66,16 @@ const EditModal = ({ user }: EditProps) => {
       data.append("fullName", formData.fullName || "");
       data.append("email", formData.email || "");
       data.append("bio", formData.bio || "");
-
-      // Call mutation with FormData
       const responseData = await updateFn(data).unwrap();
       if (responseData) {
+        dispatch(setUser(responseData));
         toast.success("Profile updated successfully");
-        setShowModal(false); // optionally close modal on success
+        setShowModal(false);
+        setFormData((prev) => ({
+          ...prev,
+          profileImg: null,
+          preview: responseData.profileImg,
+        }));
       }
     } catch (error) {
       const apiError = error as ApiError;
