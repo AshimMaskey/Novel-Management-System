@@ -19,7 +19,7 @@ import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
 const App = () => {
-  const { data, error, isLoading } = useGetUserQuery();
+  const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const App = () => {
     }
   }, [error, dispatch]);
 
-  if (isLoading)
+  if (isLoading || isFetching)
     return (
       <>
         <div className="bg-background w-screen h-screen flex justify-center items-center">
@@ -100,7 +100,7 @@ const App = () => {
           }
         />
       </Routes>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" />
     </>
   );
 };
