@@ -15,6 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useFetchAllNotificationsQuery } from "@/features/notifications/notificationApi";
 
 const Navbar = () => {
   const isAuthenticated = useSelector(
@@ -22,6 +23,9 @@ const Navbar = () => {
   );
   const { setTheme, theme } = useTheme();
   const [open, setOpen] = useState(false);
+
+  //notification count
+  const { data } = useFetchAllNotificationsQuery();
 
   return (
     <>
@@ -103,7 +107,7 @@ const Navbar = () => {
                 }
                 to="/notifications"
               >
-                <NotificationBell count={2} />
+                <NotificationBell count={data?.length} />
               </NavLink>
             </div>
             <div>
