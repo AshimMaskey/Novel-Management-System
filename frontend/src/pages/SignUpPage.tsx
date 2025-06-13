@@ -166,7 +166,7 @@ const SignUpPage = () => {
               </div>
               <span className="text-destructive">{error}</span>
               {isLoading ? (
-                <LoadingButton value="Logging in..." />
+                <LoadingButton value="Signning up..." />
               ) : (
                 <Button type="submit" className="w-full mt-3">
                   Sign Up

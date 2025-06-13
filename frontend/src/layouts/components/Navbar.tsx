@@ -10,7 +10,7 @@ import { Moon, Sun } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RxHamburgerMenu } from "react-icons/rx";
-
+import { IoIosPersonAdd } from "react-icons/io";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -18,8 +18,8 @@ import type { RootState } from "@/store/store";
 import { useFetchAllNotificationsQuery } from "@/features/notifications/notificationApi";
 
 const Navbar = () => {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
   );
   const { setTheme, theme } = useTheme();
   const [open, setOpen] = useState(false);
@@ -58,19 +58,35 @@ const Navbar = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  className={({ isActive }) =>
-                    `hover:text-primary flex items-center gap-x-3 duration-300 ${
-                      isActive ? "text-primary" : ""
-                    }`
-                  }
-                  to="/create"
-                >
-                  <span className="text-xl">
-                    <FaPenNib />
-                  </span>
-                  Create
-                </NavLink>
+                {user?.role === "reader" || user === null ? (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `hover:text-primary flex items-center gap-x-3 duration-300 ${
+                        isActive ? "text-primary" : ""
+                      }`
+                    }
+                    to="/join"
+                  >
+                    <span className="text-2xl">
+                      <IoIosPersonAdd />
+                    </span>
+                    Author
+                  </NavLink>
+                ) : (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `hover:text-primary flex items-center gap-x-3 duration-300 ${
+                        isActive ? "text-primary" : ""
+                      }`
+                    }
+                    to="/create"
+                  >
+                    <span className="text-xl">
+                      <FaPenNib />
+                    </span>
+                    Create
+                  </NavLink>
+                )}
               </li>
               <li>
                 <NavLink

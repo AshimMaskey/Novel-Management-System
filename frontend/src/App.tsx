@@ -18,6 +18,7 @@ import Spinner from "./components/ui/Spinner";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
+import JoinPage from "./pages/create/JoinPage";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -52,6 +53,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <CreatePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/join"
+            element={
+              <PrivateRoute>
+                <JoinPage />
               </PrivateRoute>
             }
           />
