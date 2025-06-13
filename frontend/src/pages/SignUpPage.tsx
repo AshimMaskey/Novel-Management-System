@@ -13,8 +13,16 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import type { SignUpData } from "@/types/auth";
+import { useSignupMutation } from "@/features/auth/authApi";
+import type { ApiError } from "@/types/error";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/features/auth/authSlice";
+import toast from "react-hot-toast";
+import LoadingButton from "@/components/ui/LoadingButton";
 
 const SignUpPage = () => {
+  const [signUpFunc, { isLoading }] = useSignupMutation();
+  const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<SignUpData>({
@@ -24,7 +32,7 @@ const SignUpPage = () => {
     fullName: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
       !formData.username ||
@@ -58,7 +66,17 @@ const SignUpPage = () => {
       return;
     }
 
-    console.log("Form submitted:", formData);
+    try {
+      const data = await signUpFunc(formData).unwrap();
+      if (data) {
+        dispatch(setUser(data));
+        toast.success("User registered successfully!");
+      }
+    } catch (error) {
+      const apiError = error as ApiError;
+      setError(apiError?.data?.message);
+      console.log(apiError);
+    }
   };
 
   return (
@@ -147,9 +165,13 @@ const SignUpPage = () => {
                 </button>
               </div>
               <span className="text-destructive">{error}</span>
-              <Button type="submit" className="w-full mt-3">
-                Sign Up
-              </Button>
+              {isLoading ? (
+                <LoadingButton value="Logging in..." />
+              ) : (
+                <Button type="submit" className="w-full mt-3">
+                  Sign Up
+                </Button>
+              )}
             </form>
           </CardContent>
           <CardFooter>

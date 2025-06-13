@@ -1,4 +1,3 @@
-import Spinner from "@/components/ui/Spinner";
 import type { RootState } from "@/store/store";
 import type { ReactNode } from "react";
 import { useSelector } from "react-redux";
@@ -9,13 +8,7 @@ const PublicRoute = ({ children }: { children: ReactNode }) => {
     (state: RootState) => state.auth
   );
   if (!authChecked) {
-    return (
-      <>
-        <div className="bg-background w-screen h-screen flex justify-center items-center">
-          <Spinner />
-        </div>
-      </>
-    );
+    return null;
   }
   if (isAuthenticated) {
     return <Navigate to="/profile" replace />;
