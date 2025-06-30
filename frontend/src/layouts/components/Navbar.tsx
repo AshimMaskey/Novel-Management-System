@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { Link, NavLink } from "react-router-dom";
 import { BsBrowserSafari } from "react-icons/bs";
-import { FaPenNib } from "react-icons/fa";
+import { FaPenNib, FaUserShield } from "react-icons/fa";
 import { IoBookmarks } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
 import { useTheme } from "@/components/ui/theme-provider";
@@ -58,7 +58,21 @@ const Navbar = () => {
                 </NavLink>
               </li>
               <li>
-                {user?.role === "reader" || user === null ? (
+                {user?.role === "admin" ? (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `hover:text-primary flex items-center gap-x-3 duration-300 ${
+                        isActive ? "text-primary" : ""
+                      }`
+                    }
+                    to="/admin"
+                  >
+                    <span className="text-2xl">
+                      <FaUserShield />
+                    </span>
+                    Admin
+                  </NavLink>
+                ) : user?.role === "reader" || user === null ? (
                   <NavLink
                     className={({ isActive }) =>
                       `hover:text-primary flex items-center gap-x-3 duration-300 ${
@@ -88,6 +102,7 @@ const Navbar = () => {
                   </NavLink>
                 )}
               </li>
+
               <li>
                 <NavLink
                   className={({ isActive }) =>

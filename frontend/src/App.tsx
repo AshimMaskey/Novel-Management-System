@@ -19,6 +19,8 @@ import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "./features/auth/authSlice";
 import { useEffect } from "react";
 import JoinPage from "./pages/create/JoinPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLayout from "./layouts/AdminLayout";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -108,6 +110,16 @@ const App = () => {
             </PublicRoute>
           }
         />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            index
+            element={
+              <PrivateRoute>
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+        </Route>
       </Routes>
       <Toaster position="top-center" />
     </>
