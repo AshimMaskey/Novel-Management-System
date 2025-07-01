@@ -1,5 +1,86 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Users,
+  BookOpen,
+  UserCheck,
+  ShieldCheck,
+  MessageSquare,
+  BookMarked,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
+const dashboardData = [
+  {
+    title: "Users",
+    value: 1200,
+    description: "Total registered users",
+    icon: Users,
+    link: "/admin/users",
+  },
+  {
+    title: "Novels",
+    value: 345,
+    description: "Published novels",
+    icon: BookOpen,
+    link: "/admin/novels",
+  },
+  {
+    title: "Authors",
+    value: 58,
+    description: "Active content creators",
+    icon: UserCheck,
+    link: "/admin/authors",
+  },
+  {
+    title: "Admins",
+    value: 6,
+    description: "Platform administrators",
+    icon: ShieldCheck,
+    link: "/admin/admins",
+  },
+  {
+    title: "Comments",
+    value: 210,
+    description: "User comments on novels",
+    icon: MessageSquare,
+    link: "/admin/comments",
+  },
+  {
+    title: "Genres",
+    value: 18,
+    description: "Available genres",
+    icon: BookMarked,
+    link: "/admin/genres",
+  },
+];
+
 const AdminDashboard = () => {
-  return <div>AdminDashboard</div>;
+  return (
+    <div className=" space-y-6">
+      <h1 className="text-2xl font-semibold text-gray-700">Admin Dashboard</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {dashboardData.map((item) => (
+          <Link to={item.link} key={item.title}>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">
+                  {item.title}
+                </CardTitle>
+                <item.icon className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{item.value}</div>
+                <p className="text-xs text-muted-foreground">
+                  {item.description}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default AdminDashboard;

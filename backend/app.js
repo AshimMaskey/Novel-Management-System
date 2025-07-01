@@ -12,6 +12,8 @@ import commentRoute from "./src/routes/comment.route.js";
 import notificationRoute from "./src/routes/notification.route.js";
 import bookmarkRoute from "./src/routes/bookmark.route.js";
 import reviewRoute from "./src/routes/review.route.js";
+import dashboardRoute from "./src/routes/dashboard.route.js";
+
 import connectDB from "./src/utils/connectDB.js";
 
 dotenv.config();
@@ -38,6 +40,7 @@ app.use("/api/comment", commentRoute);
 app.use("/api/notification", notificationRoute);
 app.use("/api/bookmarks", bookmarkRoute);
 app.use("/api/review", reviewRoute);
+app.use("/api/dashboard", dashboardRoute);
 
 //server start
 const PORT = process.env.PORT || 8080;
