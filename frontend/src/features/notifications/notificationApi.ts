@@ -7,24 +7,30 @@ export const notificationApi = createApi({
     baseUrl: `${import.meta.env.VITE_API_BASE_URL}/notification`,
     credentials: "include",
   }),
+  tagTypes: ["Notifications"],
   endpoints: (builder) => ({
     fetchAllNotifications: builder.query<Notification[], void>({
       query: () => ({
         url: "",
         method: "GET",
       }),
+      providesTags: ["Notifications"],
     }),
+
     deleteAllNotifications: builder.mutation<DeleteNotification, void>({
       query: () => ({
         url: "/",
         method: "DELETE",
       }),
+      invalidatesTags: ["Notifications"],
     }),
+
     deleteSingleNotification: builder.mutation<Notification, string>({
       query: (id: string) => ({
         url: `/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Notifications"],
     }),
   }),
 });

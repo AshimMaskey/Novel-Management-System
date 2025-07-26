@@ -1,3 +1,4 @@
+import type { GenreType } from "@/types/genre";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const genreApi = createApi({
@@ -7,7 +8,7 @@ export const genreApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    fetchGenre: builder.query({
+    fetchGenre: builder.query<GenreType[], void>({
       query: () => ({
         url: "/",
         method: "GET",

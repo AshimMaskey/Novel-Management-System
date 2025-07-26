@@ -92,7 +92,7 @@ export const handleDeleteGenre = async (req, res) => {
 
 export const handleGetAllGenre = async (req, res) => {
   try {
-    const genres = await Genre.find({}).sort({ createdAt: -1 });
+    const genres = await Genre.find({}).sort({ createdAt: 1 });
     if (genres.length === 0) {
       return res.status(404).json({ message: "No genres found" });
     }

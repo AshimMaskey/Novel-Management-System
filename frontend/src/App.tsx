@@ -21,6 +21,9 @@ import { useEffect } from "react";
 import JoinPage from "./pages/create/JoinPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLayout from "./layouts/AdminLayout";
+import Genre from "./pages/admin/Genre";
+import Novels from "./pages/admin/Novels";
+import Users from "./pages/admin/Users";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -116,6 +119,30 @@ const App = () => {
             element={
               <PrivateRoute>
                 <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/genre"
+            element={
+              <PrivateRoute>
+                <Genre />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/novels"
+            element={
+              <PrivateRoute>
+                <Novels />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateRoute>
+                <Users />
               </PrivateRoute>
             }
           />

@@ -29,7 +29,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="border-b-2 py-1 border-border">
+      <div className="border-b-2 py-3 border-border">
         <div className="max-w-5xl flex items-center justify-between mx-auto">
           <div className="ml-5 md:ml-0">
             <Link to="/">

@@ -11,7 +11,7 @@ export const fetchAdminDashboard = async (req, res) => {
       commentsCount,
       authorsCount,
       adminCount,
-      genreCount,
+      genresCount,
     ] = await Promise.all([
       User.countDocuments(),
       Novel.countDocuments(),
@@ -27,7 +27,7 @@ export const fetchAdminDashboard = async (req, res) => {
       commentsCount,
       authorsCount,
       adminCount,
-      genreCount,
+      genresCount,
     });
   } catch (error) {
     console.error("Error fetching admin dashboard data:", error);

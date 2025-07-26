@@ -1,3 +1,4 @@
+import type { GetUser } from "@/types/auth";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const userApi = createApi({
@@ -14,7 +15,13 @@ export const userApi = createApi({
         body: updateData,
       }),
     }),
+    fetchUsers: builder.query<GetUser[], void>({
+      query: () => ({
+        url: "/profiles",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useUpdateUserMutation } = userApi;
+export const { useUpdateUserMutation, useFetchUsersQuery } = userApi;
