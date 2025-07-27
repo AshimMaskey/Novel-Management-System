@@ -46,7 +46,7 @@ const novels: Novel[] = [
 export function FeaturedNovels() {
   return (
     <section className="containerBox mt-14">
-      <h3 className="text-2xl font-bold mb-6">📖 Featured Novels</h3>
+      <h3 className="text-2xl font-bold mb-6">📚 Featured Novels</h3>
 
       {/* Scrollable Carousel */}
       <div className="flex overflow-x-auto space-x-4 snap-x snap-mandatory pb-2">
@@ -64,7 +64,7 @@ export function FeaturedNovels() {
             </div>
             <div className="p-3">
               <h4 className="text-sm font-semibold mb-1">{novel.title}</h4>
-              <a href={novel.link} className="text-indigo-600 text-xs">
+              <a href={novel.link} className="text-primary text-xs">
                 Read Now →
               </a>
             </div>

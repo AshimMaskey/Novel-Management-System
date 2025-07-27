@@ -1,21 +1,7 @@
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
-const tags = [
-  "ISEKAI",
-  "ANIME",
-  "NARUTO",
-  "MARVEL",
-  "YAOI",
-  "ONEPIECE",
-  "HARRYPOTTER",
-  "YURI",
-  "MHA",
-  "DC",
-  "POKEMON",
-  "BNHA",
-  "GAME OF THRONES",
-  "DANMACHI",
-];
+const tags = ["Adventure", "Mystery", "Romance", "Fantasy", "Action"];
 
 const TopTags = () => {
   return (
@@ -24,12 +10,14 @@ const TopTags = () => {
       <Separator className="mb-4" />
       <div className="flex flex-wrap gap-4">
         {tags.map((tag, index) => (
-          <div
-            key={index}
-            className="bg-card px-3 py-2 rounded-md hover:cursor-pointer text-blue-600 font-semibold text-sm"
-          >
-            {tag}
-          </div>
+          <Link to={`/browse?genre=${tag}`}>
+            <div
+              key={index}
+              className="bg-card px-3 py-2 rounded-md hover:cursor-pointer text-blue-600 font-semibold text-sm"
+            >
+              {tag}
+            </div>
+          </Link>
         ))}
       </div>
     </div>

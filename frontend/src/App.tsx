@@ -24,6 +24,9 @@ import AdminLayout from "./layouts/AdminLayout";
 import Genre from "./pages/admin/Genre";
 import Novels from "./pages/admin/Novels";
 import Users from "./pages/admin/Users";
+import ContactPage from "./pages/contact/ContactPage";
+import AboutPage from "./pages/about/AboutPage";
+import ScrollToTop from "./lib/ScrollToTop";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -50,6 +53,7 @@ const App = () => {
     );
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
@@ -78,6 +82,8 @@ const App = () => {
             }
           />
           <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="/notifications"
             element={

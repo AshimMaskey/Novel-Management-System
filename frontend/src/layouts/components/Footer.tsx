@@ -9,15 +9,12 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-white font-bold text-xl">InkTale</div>
 
-            <nav className="flex space-x-6 text-sm">
+            <nav className="flex space-x-6 italic text-sm">
               <Link to="/" className="hover:text-white">
                 Home
               </Link>
-              <Link to="/novels" className="hover:text-white">
+              <Link to="/browse" className="hover:text-white">
                 Novels
-              </Link>
-              <Link to="/authors" className="hover:text-white">
-                Authors
               </Link>
               <Link to="/about" className="hover:text-white">
                 About

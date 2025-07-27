@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export function HeroSection() {
   return (
@@ -19,7 +20,9 @@ export function HeroSection() {
           Explore thousands of stories from aspiring and established authors.
         </p>
         <div className="flex justify-center gap-4">
-          <Button variant="default">Start Reading</Button>
+          <Link to="/browse">
+            <Button variant="default">Start Reading</Button>
+          </Link>
           <Button
             variant="ghost"
             className="text-white border-white border hover:bg-white hover:text-primary"
