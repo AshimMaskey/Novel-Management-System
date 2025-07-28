@@ -1,10 +1,16 @@
 import {
+  BarChart,
   BookOpen,
   Calendar,
+  FileText,
   Home,
   Inbox,
+  MessageSquare,
+  Plus,
   Search,
+  Star,
   Tag,
+  User,
   Users,
 } from "lucide-react";
 import {
@@ -19,7 +25,11 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 
-const items = [
+interface AppSidebarProps {
+  isAuthor: boolean;
+}
+
+const adminItems = [
   { title: "Dashboard", url: "/admin", icon: Home },
   { title: "Novels", url: "/admin/novels", icon: BookOpen },
   { title: "Users", url: "/admin/users", icon: Users },
@@ -28,14 +38,26 @@ const items = [
   { title: "Search", url: "/admin/search", icon: Search },
   { title: "Genre", url: "/admin/genre", icon: Tag },
 ];
+const authorItems = [
+  { title: "Dashboard", icon: Home, url: "/author" },
+  { title: "My Novels", icon: BookOpen, url: "/author/novels" },
+  { title: "Create Novel", icon: Plus, url: "/author/create" },
+  { title: "Manage Chapter", icon: FileText, url: "/author/chapters" },
+  { title: "Comments", icon: MessageSquare, url: "/author/comments" },
+  { title: "Reviews", icon: Star, url: "/author/reviews" },
+  { title: "Analytics", icon: BarChart, url: "/author/stats" },
+  { title: "Profile", icon: User, url: "/author/profile" },
+];
 
-export function AppSidebar() {
+export function AppSidebar({ isAuthor }: AppSidebarProps) {
+  const items = isAuthor ? authorItems : adminItems;
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-lg text-primary font-bold">
-            Admin Panel
+            {isAuthor ? "Author Dashboard" : "Admin Dashboard"}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

@@ -93,7 +93,7 @@ const Navbar = () => {
                         isActive ? "text-primary" : ""
                       }`
                     }
-                    to="/create"
+                    to="/author"
                   >
                     <span className="text-xl">
                       <FaPenNib />

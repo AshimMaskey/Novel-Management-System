@@ -20,7 +20,7 @@ const JoinPage = () => {
       if (data) {
         toast.success("Role updated to Author!");
         dispatch(setUser(data));
-        navigate("/create");
+        navigate("/author");
       }
     } catch (error) {
       const apiError = error as ApiError;

@@ -38,7 +38,7 @@ const Novels = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-700">Novels</h1>
-        <Link to="/create">
+        <Link to="/author">
           <Button className="bg-green-500 hover:bg-green-600 duration-200 transition-all">
             Add
           </Button>
