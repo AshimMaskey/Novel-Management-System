@@ -1,91 +1,55 @@
-type Novel = {
-  title: string;
-  image: string;
-  link: string;
-  author: string;
-};
-
-const novels: Novel[] = [
-  {
-    title: "The Lost Kingdom",
-    image:
-      "https://i.pinimg.com/1200x/29/d4/eb/29d4ebbfa7a2e4e9c287010448ccfb7a.jpg",
-    link: "/novels/4",
-    author: "Aiden Frost",
-  },
-  {
-    title: "The Lost Kingdom",
-    image:
-      "https://i.pinimg.com/1200x/29/d4/eb/29d4ebbfa7a2e4e9c287010448ccfb7a.jpg",
-    link: "/novels/4",
-    author: "Aiden Frost",
-  },
-  {
-    title: "The Lost Kingdom",
-    image:
-      "https://i.pinimg.com/1200x/83/3c/f6/833cf6900ba01ff842d0b0032087da40.jpg",
-    link: "/novels/4",
-    author: "Aiden Frost",
-  },
-  {
-    title: "The Lost Kingdom",
-    image:
-      "https://i.pinimg.com/1200x/b6/d7/f6/b6d7f67ec40e70595728afcb3cae65b5.jpg",
-    link: "/novels/4",
-    author: "Aiden Frost",
-  },
-  {
-    title: "Midnight Reverie",
-    image:
-      "https://i.pinimg.com/1200x/29/d4/eb/29d4ebbfa7a2e4e9c287010448ccfb7a.jpg",
-    link: "/novels/5",
-    author: "Luna Hart",
-  },
-  {
-    title: "Midnight Reverie",
-    image:
-      "https://i.pinimg.com/1200x/29/d4/eb/29d4ebbfa7a2e4e9c287010448ccfb7a.jpg",
-    link: "/novels/5",
-    author: "Luna Hart",
-  },
-  {
-    title: "Midnight Reverie",
-    image:
-      "https://i.pinimg.com/1200x/29/d4/eb/29d4ebbfa7a2e4e9c287010448ccfb7a.jpg",
-    link: "/novels/5",
-    author: "Luna Hart",
-  },
-];
+import Spinner from "@/components/ui/Spinner";
+import { useFetchNovelsByAuthorQuery } from "@/features/novel/novelApi";
+import type { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Reviews = () => {
+  const authorId = useSelector(
+    (state: RootState) => state.auth.user?._id ?? "jptId"
+  );
+  const { data, isLoading, error } = useFetchNovelsByAuthorQuery(authorId);
+  if (isLoading) return <Spinner />;
+  if (error) {
+    console.log(error);
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-gray-700">Reviews</h1>
       <section>
-        {novels.length === 0 ? (
-          <p className="text-gray-500">You haven't written any novel yet.</p>
+        {!data || data.length === 0 ? (
+          <div className="border border-dashed border-gray-300 p-6 rounded-md text-center text-gray-500">
+            No novels available. Click{" "}
+            <span className="font-medium text-green-600">
+              <Link to={"/author/create"}>Add</Link>
+            </span>{" "}
+            to create one.
+          </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {novels.map((book, idx) => (
+            {data.map((novel) => (
               <div
-                key={`${book.title}-${idx}`}
+                key={novel._id}
                 className="rounded-xl shadow hover:shadow-md transition p-3 bg-card"
               >
                 <div className="aspect-[3/4] overflow-hidden rounded-md mb-4">
                   <img
-                    src={book.image}
-                    alt={book.title}
+                    src={novel.image}
+                    alt={novel.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-lg font-semibold">{book.title}</h3>
-                <p className="text-sm text-gray-500 mb-2">by {book.author}</p>
+                <h3 className="text-lg font-semibold">{novel.title}</h3>
+                <p className="text-sm text-gray-500 mb-2">{novel.status}</p>
 
-                {/* Flex row: More → and icons */}
                 <div className="flex items-center justify-between text-sm">
-                  <a href={book.link} className="text-primary hover:underline">
+                  <Link
+                    to={`/author/reviews/${novel._id}`}
+                    className="text-primary hover:underline"
+                  >
                     Read Reviews →
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

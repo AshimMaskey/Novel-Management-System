@@ -6,6 +6,7 @@ import { notificationApi } from "@/features/notifications/notificationApi";
 import { adminApi } from "@/features/admin/adminApi";
 import { genreApi } from "@/features/genre/genreApi";
 import { novelApi } from "@/features/novel/novelApi";
+import { reviewApi } from "@/features/review/reviewApi";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     [adminApi.reducerPath]: adminApi.reducer,
     [genreApi.reducerPath]: genreApi.reducer,
     [novelApi.reducerPath]: novelApi.reducer,
+    [reviewApi.reducerPath]: reviewApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -24,7 +26,8 @@ export const store = configureStore({
       .concat(notificationApi.middleware)
       .concat(adminApi.middleware)
       .concat(genreApi.middleware)
-      .concat(novelApi.middleware),
+      .concat(novelApi.middleware)
+      .concat(reviewApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -199,7 +199,7 @@ const App = () => {
             }
           />
           <Route
-            path="/author/reviews/review"
+            path="/author/reviews/:id"
             element={
               <PrivateRoute>
                 <NovelReview />

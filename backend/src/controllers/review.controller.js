@@ -24,6 +24,7 @@ export const handleCreateReview = async (req, res) => {
 
     const { rating, review: reviewText } = req.body;
     if (!rating || !reviewText) {
+      console.log(rating);
       return res
         .status(400)
         .json({ message: "Rating and review are required" });
@@ -71,7 +72,7 @@ export const handleCreateReview = async (req, res) => {
       message: `${req.user.username} has reviewed your novel ${novel.title}`,
     });
 
-    return res.status(201).json({ newReview, updatedNovel });
+    return res.status(201).json(newReview);
   } catch (error) {
     console.error("Error creating review controller:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -142,7 +143,7 @@ export const handleUpdateReview = async (req, res) => {
       );
     }
 
-    return res.status(200).json({ updatedReview, updatedNovel });
+    return res.status(200).json(updatedReview);
   } catch (error) {
     console.error("Error updating review controller:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -179,10 +180,17 @@ export const handleDeleteReview = async (req, res) => {
     if (!review) {
       return res.status(404).json({ message: "Review not found" });
     }
-    if (
-      review.user.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
+
+    const novel = await Novel.findById(review.novel);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+
+    const isReviewAuthor = review.user.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+    const isNovelAuthor = novel.author.toString() === req.user._id.toString();
+
+    if (!isReviewAuthor && !isAdmin && !isNovelAuthor) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
@@ -190,10 +198,7 @@ export const handleDeleteReview = async (req, res) => {
     if (!deletedReview) {
       return res.status(404).json({ message: "Review not found" });
     }
-    const novel = await Novel.findById(review.novel);
-    if (!novel) {
-      return res.status(404).json({ message: "Novel not found" });
-    }
+
     let newAverageRating = 0;
     if (novel.reviewCount > 1) {
       newAverageRating = (
@@ -213,7 +218,7 @@ export const handleDeleteReview = async (req, res) => {
       { new: true }
     );
 
-    return res.status(200).json({ updatedNovel, deletedReview });
+    return res.status(200).json(deletedReview);
   } catch (error) {
     console.error("Error deleting review controller:", error);
     return res.status(500).json({ message: "Internal server error" });

@@ -1,70 +1,15 @@
-import React from "react";
-import { Star } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
+import {
+  useDeleteReviewMutation,
+  useFetchReviewByNovelIdQuery,
+} from "@/features/review/reviewApi";
+import getRelativeTime from "@/utils/convertTime";
+import { Loader2, Star, Trash } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
-interface Review {
-  id: string;
-  username: string;
-  profileImage?: string;
-  review: string;
-  rating: number;
-  reviewNum: number;
-  date?: string;
-}
-
-const NovelReview: React.FC = () => {
-  // Mock data for demonstration
-  const reviews: Review[] = [
-    {
-      id: "1",
-      username: "Sarah Johnson",
-      review:
-        "Absolutely loved this product! The quality exceeded my expectations and the customer service was outstanding. Would definitely recommend to anyone looking for a reliable solution.",
-      rating: 5,
-      reviewNum: 1,
-      date: "2 days ago",
-    },
-    {
-      id: "2",
-      username: "Mike Chen",
-      profileImage:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
-      review:
-        "Good value for money. The product works as advertised, though there are a few minor issues with the user interface. Overall satisfied with the purchase.",
-      rating: 4,
-      reviewNum: 2,
-      date: "1 week ago",
-    },
-    {
-      id: "3",
-      username: "Emily Rodriguez",
-      review:
-        "Not what I expected. The product description was misleading and it took longer than promised to arrive. Customer support was helpful in resolving issues though.",
-      rating: 2,
-      reviewNum: 3,
-      date: "2 weeks ago",
-    },
-    {
-      id: "4",
-      username: "David Kumar",
-      profileImage:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
-      review:
-        "Excellent build quality and fast shipping. The features work exactly as described and the price point is very competitive. Highly recommend!",
-      rating: 5,
-      reviewNum: 4,
-      date: "3 weeks ago",
-    },
-    {
-      id: "5",
-      username: "Lisa Thompson",
-      review:
-        "Decent product overall. Does the job but nothing exceptional. Installation was straightforward and it has been working reliably for the past month.",
-      rating: 3,
-      reviewNum: 5,
-      date: "1 month ago",
-    },
-  ];
-
+const NovelReview = () => {
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
@@ -77,116 +22,93 @@ const NovelReview: React.FC = () => {
     ));
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  const { id } = useParams();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const anotherId = id ?? "jptID";
+  const { data, isLoading, error } = useFetchReviewByNovelIdQuery(anotherId);
+  const [deleteReview, { isLoading: isDeleting }] = useDeleteReviewMutation();
+  if (isLoading) return <Spinner />;
+  if (error) {
+    console.log(error);
+  }
+  const handleClick = async (id: string) => {
+    try {
+      await deleteReview(id).unwrap();
+      toast.success("Review deleted successfully!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error occurred while deleting review!");
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Customer Reviews
-        </h2>
-        <p className="text-gray-600">See what our customers are saying</p>
-      </div>
-
-      <div className="space-y-4">
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
-          >
-            {/* Header */}
-            <div className="flex items-start gap-3 mb-4">
-              {/* Profile Picture */}
-              <div className="flex-shrink-0">
-                {review.profileImage ? (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold text-gray-700">Reviews</h1>
+      {error || data?.length === 0 ? (
+        <div className="border border-dashed border-gray-300 p-6 rounded-md text-center text-gray-500">
+          No<span className="text-destructive"> reviews</span> available for
+          this Novel.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {data?.map((review) => (
+            <div
+              key={review._id}
+              className=" border-2 border-border rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-shrink-0">
                   <img
-                    src={review.profileImage}
-                    alt={`${review.username}'s profile`}
+                    src={review.user.profileImg}
+                    alt={`${review.user.username}'s profile`}
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-100"
                   />
-                ) : (
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                      {getInitials(review.username)}
-                    </span>
-                  </div>
-                )}
-              </div>
+                </div>
 
-              {/* User Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
-                      {review.username}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        {renderStars(review.rating)}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold text-sm sm:text-base">
+                        {review.user.username}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {renderStars(review.rating)}
+                        </div>
+                        <span className="text-sm">({review.rating}/5)</span>
                       </div>
-                      <span className="text-sm text-gray-500">
-                        ({review.rating}/5)
-                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      {review.createdAt && (
+                        <span>{getRelativeTime(review.createdAt)}</span>
+                      )}
+                      {selectedId === review._id && isDeleting ? (
+                        <Loader2 className="animate-spin mr-2" />
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedId(review._id);
+                            handleClick(review._id);
+                          }}
+                          className="hover:text-destructive cursor-pointer"
+                        >
+                          <Trash />
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <span className="hidden sm:inline">
-                      Review #{review.reviewNum}
-                    </span>
-                    <span className="sm:hidden">#{review.reviewNum}</span>
-                    {review.date && (
-                      <>
-                        <span className="hidden sm:inline">•</span>
-                        <span>{review.date}</span>
-                      </>
-                    )}
-                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Review Content */}
-            <div className="ml-0 sm:ml-15">
-              <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                {review.review}
-              </p>
-            </div>
-
-            {/* Footer Actions */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <button className="hover:text-blue-600 transition-colors flex items-center gap-1">
-                    <span>Helpful</span>
-                  </button>
-                  <button className="hover:text-blue-600 transition-colors">
-                    Reply
-                  </button>
-                </div>
-
-                <div className="text-xs text-gray-400">
-                  Review #{review.reviewNum}
-                </div>
+              <div className="ml-0 sm:ml-15">
+                <p className=" leading-relaxed text-sm sm:text-base">
+                  {review.review}
+                </p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Load More Button */}
-      <div className="text-center mt-8">
-        <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors font-medium">
-          Load More Reviews
-        </button>
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
