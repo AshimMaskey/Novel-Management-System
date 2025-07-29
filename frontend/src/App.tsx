@@ -34,6 +34,8 @@ import AuthorNovels from "./pages/author/AuthorNovels";
 import CreateNovel from "./pages/author/CreateNovel";
 import ManageChapter from "./pages/author/ManageChapter";
 import CreateChapter from "./pages/author/CreateChapter";
+import Reviews from "./pages/author/Reviews";
+import NovelReview from "./pages/author/NovelReview";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -185,6 +187,22 @@ const App = () => {
             element={
               <PrivateRoute>
                 <ManageChapter />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/author/reviews"
+            element={
+              <PrivateRoute>
+                <Reviews />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/author/reviews/review"
+            element={
+              <PrivateRoute>
+                <NovelReview />
               </PrivateRoute>
             }
           />

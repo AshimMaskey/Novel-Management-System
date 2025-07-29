@@ -1,16 +1,13 @@
 import {
-  BarChart,
   BookOpen,
   Calendar,
   FileText,
   Home,
   Inbox,
-  MessageSquare,
   Plus,
   Search,
   Star,
   Tag,
-  User,
   Users,
 } from "lucide-react";
 import {
@@ -43,10 +40,7 @@ const authorItems = [
   { title: "My Novels", icon: BookOpen, url: "/author/novels" },
   { title: "Create Novel", icon: Plus, url: "/author/create" },
   { title: "Manage Chapter", icon: FileText, url: "/author/chapters" },
-  { title: "Comments", icon: MessageSquare, url: "/author/comments" },
   { title: "Reviews", icon: Star, url: "/author/reviews" },
-  { title: "Analytics", icon: BarChart, url: "/author/stats" },
-  { title: "Profile", icon: User, url: "/author/profile" },
 ];
 
 export function AppSidebar({ isAuthor }: AppSidebarProps) {
