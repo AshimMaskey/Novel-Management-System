@@ -131,6 +131,7 @@ const EditNovelModal = ({ novel, availableGenres }: EditNovelModalProps) => {
                   </div>
                 )}
                 <Input
+                  className="border-2 border-border"
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
@@ -140,6 +141,7 @@ const EditNovelModal = ({ novel, availableGenres }: EditNovelModalProps) => {
               <div>
                 <Label htmlFor="title">Title</Label>
                 <Input
+                  className="border-2 border-border"
                   id="title"
                   name="title"
                   value={formData.title}
@@ -150,6 +152,7 @@ const EditNovelModal = ({ novel, availableGenres }: EditNovelModalProps) => {
               <div>
                 <Label htmlFor="description">Description</Label>
                 <Textarea
+                  className="border-2 border-border"
                   id="description"
                   name="description"
                   value={formData.description}
