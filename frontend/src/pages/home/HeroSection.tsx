@@ -23,12 +23,15 @@ export function HeroSection() {
           <Link to="/browse">
             <Button variant="default">Start Reading</Button>
           </Link>
-          <Button
-            variant="ghost"
-            className="text-white border-white border hover:bg-white hover:text-primary"
-          >
-            Become an Author
-          </Button>
+          <Link to="/join">
+            {" "}
+            <Button
+              variant="ghost"
+              className="text-white border-white border hover:bg-white hover:text-primary"
+            >
+              Become an Author
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

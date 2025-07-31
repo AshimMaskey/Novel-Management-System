@@ -6,7 +6,7 @@ import type { ApiError } from "@/types/error";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const JoinPage = () => {
   const [updateFunc, { isLoading }] = useUpdateUserMutation();
   const dispatch = useDispatch();
@@ -62,6 +62,12 @@ const JoinPage = () => {
           ) : (
             <p className="text-green-600 font-medium">
               You’re now an author! 🎉
+              <Link to="/author">
+                {" "}
+                <Button variant={"default"} className="ml-4">
+                  Start Writing
+                </Button>
+              </Link>
             </p>
           )}
         </div>

@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card1, CardContent } from "@/components/ui/card1";
 import { Button } from "@/components/ui/button";
+import { useFetchNovelsQuery } from "@/features/novel/novelApi";
 
 const genreList = ["Action", "Adventure", "Fantasy", "Romance", "Mystery"];
 
@@ -25,6 +26,8 @@ const allNovels = new Array(50).fill(null).map((_, i) => ({
 const itemsPerPage = 8;
 
 const BrowsePage = () => {
+  const { data, isLoading, error } = useFetchNovelsQuery();
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const genreFilter = searchParams.get("genre");
@@ -33,8 +36,8 @@ const BrowsePage = () => {
     if (!genreFilter) return allNovels;
     return allNovels.filter((novel) => novel.genres.includes(genreFilter));
   }, [genreFilter]);
-
   const [currentPage, setCurrentPage] = useState(1);
+
   const totalPages = Math.ceil(filteredNovels.length / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -43,13 +46,18 @@ const BrowsePage = () => {
     startIndex + itemsPerPage
   );
 
+  if (isLoading) return;
+  if (error) {
+    console.log(error);
+  }
+
   return (
     <div className="containerBox min-h-screen mt-12">
       <h1 className="text-2xl font-bold mb-6">
         📚 Browse Novels {genreFilter && `– ${genreFilter}`}
       </h1>
 
-      {visibleNovels.length === 0 ? (
+      {error || visibleNovels.length === 0 ? (
         <p className="text-muted-foreground text-center">
           No novels found for genre "{genreFilter}".
         </p>

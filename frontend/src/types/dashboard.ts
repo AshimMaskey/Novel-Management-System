@@ -6,3 +6,11 @@ export interface AdminDashboardResponse {
   adminCount: number;
   genresCount: number;
 }
+
+export interface AuthorDashboardResponse {
+  followersCount: number;
+  novelsCount: number;
+  viewsCount: number;
+  reviewsCount: number;
+  commentsCount: number;
+}

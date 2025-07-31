@@ -1,44 +1,51 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { CardHeader } from "@/components/ui/card1";
+import Spinner from "@/components/ui/Spinner";
+import { useAuthorDashboardQuery } from "@/features/admin/adminApi";
 import { BarChart, BookOpen, MessageSquare, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AuthorDashboard = () => {
+  const { data, isLoading, error } = useAuthorDashboardQuery();
+  if (isLoading) return <Spinner />;
+  if (error) {
+    console.log(error);
+  }
   const dashboardData = [
     {
       title: "Followers",
-      value: 0,
+      value: data?.followersCount ?? 0,
       description: "Users following you",
       icon: Users,
       link: "",
     },
     {
       title: "Novels",
-      value: 0,
+      value: data?.followersCount ?? 0,
       description: "Your novels",
       icon: BookOpen,
-      link: "/admin/novels",
+      link: "/author/novels",
     },
     {
       title: "Reviews",
-      value: 0,
-      description: "Average rating and reviews",
+      value: data?.reviewsCount ?? 0,
+      description: "Total reviews count",
       icon: Star,
       link: "/author/reviews",
     },
     {
       title: "Views",
-      value: 0,
+      value: data?.viewsCount ?? 0,
       description: "Total novel views",
       icon: BarChart,
-      link: "/author/stats",
+      link: "",
     },
     {
       title: "Comments",
-      value: 0,
-      description: "Reader feedback",
+      value: data?.commentsCount ?? 0,
+      description: "Total comments count",
       icon: MessageSquare,
-      link: "/author/comments",
+      link: "",
     },
   ];
   return (
