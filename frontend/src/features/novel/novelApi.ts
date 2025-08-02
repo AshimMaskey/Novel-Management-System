@@ -38,6 +38,13 @@ export const novelApi = createApi({
       }),
     }),
 
+    fetchRandomNovels: builder.query<NovelType[], void>({
+      query: () => ({
+        url: "/randomNovels",
+        method: "GET",
+      }),
+    }),
+
     searchNovels: builder.query<NovelType[], string>({
       query: (searchQuery) => ({
         url: `/search`,
@@ -83,4 +90,5 @@ export const {
   useCreateNovelMutation,
   useUpdateNovelMutation,
   useDeleteNovelMutation,
+  useFetchRandomNovelsQuery,
 } = novelApi;

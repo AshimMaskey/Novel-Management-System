@@ -8,6 +8,7 @@ import {
   handleGetNovelByAuthor,
   handleGetNovelByGenre,
   handleGetNovels,
+  handleGetRandomNovels,
   handleSearchNovel,
   handleUpdateNovel,
 } from "../controllers/novel.controller.js";
@@ -23,6 +24,8 @@ router.post(
   upload.single("image"),
   handleCreateNovel
 );
+router.route("/search").get(handleSearchNovel);
+router.route("/randomNovels").get(handleGetRandomNovels);
 router.get("/:id", checkId, handleGetNovel);
 router.get("/", handleGetNovels);
 router.get("/author/:id", checkId, handleGetNovelByAuthor);
@@ -34,7 +37,6 @@ router.delete(
   checkId,
   handleDeleteNovel
 );
-router.route("/search").get(handleSearchNovel);
 router.patch(
   "/:id",
   verifyToken,

@@ -1,60 +1,61 @@
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-
-type Novel = {
-  title: string;
-  image: string;
-  link: string;
-};
-
-const dummyNovels: Novel[] = [
-  {
-    title: "The Crimson Blade",
-    image:
-      "https://i.pinimg.com/1200x/8a/ec/68/8aec68f02a50382a4b6b2405f88480d9.jpg",
-    link: "/novels/1",
-  },
-  {
-    title: "Whispers in the Wind",
-    image:
-      "https://i.pinimg.com/1200x/56/80/d9/5680d98943ea93643240af57f29d0049.jpg",
-    link: "/novels/2",
-  },
-  {
-    title: "Echoes of the Past",
-    image:
-      "https://i.pinimg.com/736x/c0/6a/42/c06a4288d2496c00bf7ef07dbe55de15.jpg",
-    link: "/novels/3",
-  },
-  // Add more novels
-];
+import Spinner from "@/components/ui/Spinner";
+import { useSearchNovelsQuery } from "@/features/novel/novelApi";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-
-  const filteredNovels = dummyNovels.filter((novel) =>
-    novel.title.toLowerCase().includes(query.toLowerCase())
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    "Enter the title...."
   );
 
+  const {
+    data: novels = [],
+    isLoading,
+    error,
+  } = useSearchNovelsQuery(query.length >= 3 ? query : "", {
+    skip: query.trim().length < 3,
+  });
+
+  useEffect(() => {
+    if (query.trim().length === 0) {
+      setErrorMessage("Enter the title....");
+    } else if (query.trim().length < 3) {
+      setErrorMessage("Should be more than 2 characters.");
+    } else {
+      setErrorMessage(null);
+    }
+  }, [query]);
+
+  if (error) {
+    console.log(error);
+  }
+
   return (
-    <section className="containerBox mt-14">
+    <section className="containerBox mt-12">
       <h2 className="text-2xl font-bold mb-6">🔍 Search Novels</h2>
+
       <Input
         type="text"
         placeholder="Search by title..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="mb-8"
+        className="mb-4 border-2 border-border"
       />
 
-      {filteredNovels.length === 0 ? (
+      {errorMessage && <p className="text-red-500 ml-2 mb-4">{errorMessage}</p>}
+
+      {isLoading && <Spinner />}
+
+      {novels.length === 0 && !isLoading && !errorMessage ? (
         <p className="text-muted-foreground">No results found.</p>
       ) : (
         <div className="grid md:grid-cols-4 gap-6">
-          {filteredNovels.map((novel) => (
-            <a
-              key={novel.title}
-              href={novel.link}
+          {novels.map((novel) => (
+            <Link
+              key={novel._id}
+              to={`/novel/${novel._id}`}
               className="block rounded shadow md:hover:scale-105 transition"
             >
               <div className="relative w-full aspect-[3/4] overflow-hidden rounded-t-md">
@@ -65,8 +66,9 @@ export default function SearchPage() {
                 />
               </div>
               <h4 className="font-semibold mt-2">{novel.title}</h4>
+
               <p className="text-primary text-sm">Read Now →</p>
-            </a>
+            </Link>
           ))}
         </div>
       )}

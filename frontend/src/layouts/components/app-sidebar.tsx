@@ -1,15 +1,4 @@
-import {
-  BookOpen,
-  Calendar,
-  FileText,
-  Home,
-  Inbox,
-  Plus,
-  Search,
-  Star,
-  Tag,
-  Users,
-} from "lucide-react";
+import { BookOpen, FileText, Home, Plus, Star, Tag, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,9 +19,7 @@ const adminItems = [
   { title: "Dashboard", url: "/admin", icon: Home },
   { title: "Novels", url: "/admin/novels", icon: BookOpen },
   { title: "Users", url: "/admin/users", icon: Users },
-  { title: "Inbox", url: "/admin/inbox", icon: Inbox },
-  { title: "Calendar", url: "/admin/calendar", icon: Calendar },
-  { title: "Search", url: "/admin/search", icon: Search },
+  // { title: "Search", url: "/admin/search", icon: Search },
   { title: "Genre", url: "/admin/genre", icon: Tag },
 ];
 const authorItems = [

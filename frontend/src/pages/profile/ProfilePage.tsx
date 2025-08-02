@@ -28,7 +28,7 @@ const ProfilePage = () => {
   };
   return (
     <>
-      <div className="w-full bg-card">
+      <div className="w-full">
         <div className="containerBox relative h-80">
           <img
             className="w-full rounded-b-2xl h-full object-cover"

@@ -169,6 +169,7 @@ export const handleDeleteNovel = async (req, res) => {
 
 export const handleSearchNovel = async (req, res) => {
   try {
+    console.log("checking search novel controller");
     const searchQuery = req.query.search;
 
     if (!searchQuery) {
@@ -267,5 +268,18 @@ export const handleUpdateNovel = async (req, res) => {
   } catch (error) {
     console.error("Error updating novel:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const handleGetRandomNovels = async (req, res) => {
+  try {
+    const novelCount = 6;
+    const novels = await Novel.aggregate([{ $sample: { size: novelCount } }]);
+    if (novels.length === 0)
+      return res.status(404).json({ message: "No novels found!" });
+    return res.status(200).json(novels);
+  } catch (error) {
+    console.error("Error getting novels controller:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

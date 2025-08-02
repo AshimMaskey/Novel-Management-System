@@ -8,7 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/app-sidebar";
 
 const AdminLayout = () => {
-  const role = useSelector((state: RootState) => state.auth.user?.role);
+  const role = useSelector((state: RootState) => state?.auth.user?.role);
   const navigate = useNavigate();
 
   useEffect(() => {

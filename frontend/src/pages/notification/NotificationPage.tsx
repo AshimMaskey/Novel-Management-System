@@ -126,7 +126,7 @@ const NotificationPage = () => {
 
   return (
     <>
-      <div className="bg-card min-h-screen">
+      <div className=" min-h-screen">
         <div className="containerBox px-3 md:p-0">
           <div className="pt-5 flex items-center justify-between">
             <div className="flex">

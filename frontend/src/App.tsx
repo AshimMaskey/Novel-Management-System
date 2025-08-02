@@ -88,8 +88,11 @@ const App = () => {
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/novel" element={<NovelPage />} />
-          <Route path="/chapter" element={<ChapterPage />} />
+          <Route path="/novel/:id" element={<NovelPage />} />
+          <Route
+            path="/chapter/:novelId/:chapterNumber"
+            element={<ChapterPage />}
+          />
           <Route
             path="/notifications"
             element={

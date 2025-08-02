@@ -9,6 +9,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
   reducerPath: "authApi",
+  tagTypes: ["User"],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_API_BASE_URL}/auth`,
     credentials: "include",
@@ -39,6 +40,7 @@ export const authApi = createApi({
         url: "/getUser",
         method: "GET",
       }),
+      providesTags: ["User"],
     }),
   }),
 });

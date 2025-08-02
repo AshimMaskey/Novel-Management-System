@@ -1,86 +1,132 @@
-import {
-  Star,
-  BookOpen,
-  MessageSquare,
-  Eye,
-  Share,
-  Bookmark,
-} from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Make sure this exists in your UI kit
-import { Link } from "react-router-dom";
+import { Star, BookOpen, MessageSquare, Eye, Bookmark } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link, useParams } from "react-router-dom";
+import { useFetchNovelByIdQuery } from "@/features/novel/novelApi";
+import Spinner from "@/components/ui/Spinner";
+import getRelativeTime from "@/utils/convertTime";
+import { useGetAllChaptersQuery } from "@/features/chapter/chapterApi";
+import { useFetchReviewByNovelIdQuery } from "@/features/review/reviewApi";
+import ReviewDialog from "./ReviewDialog";
+import { useToggleBookmarkMutation } from "@/features/bookmark/bookmarkApi";
+import type { ApiError } from "@/types/error";
+import toast from "react-hot-toast";
+import { useGetUserQuery } from "@/features/auth/authApi";
+import { useMemo } from "react";
 
 export default function NovelPage() {
-  return (
-    <div className="min-h-screen containerBox from-purple-900 via-blue-900 to-green-800">
-      <div className="absolute"></div>
+  const { id } = useParams();
+  const { data: userInfo, refetch: refetchUser } = useGetUserQuery();
+  const bookmarks = userInfo?.bookmarks;
+  const isBookmarked = useMemo(
+    () => bookmarks?.includes(id ?? ""),
+    [bookmarks, id]
+  );
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+  const { data, isLoading, error } = useFetchNovelByIdQuery(id ?? "");
+  const [toggleBookmark, { isLoading: isToggling }] =
+    useToggleBookmarkMutation();
+
+  const {
+    data: chapters,
+    isLoading: isLoadingChapter,
+    error: chapterError,
+  } = useGetAllChaptersQuery(id ?? "");
+
+  const {
+    data: reviews,
+    isLoading: isLoadingReview,
+    error: reviewError,
+  } = useFetchReviewByNovelIdQuery(id ?? "");
+
+  const handleToggle = async () => {
+    try {
+      const data = await toggleBookmark(id ?? "").unwrap();
+      toast.success(data.message ?? "No reply");
+      refetchUser();
+    } catch (error) {
+      const apiError = error as ApiError;
+      toast.error(apiError.data.message ?? "An error occurred!");
+    }
+  };
+
+  if (isLoading || isLoadingChapter || isLoadingReview) {
+    return (
+      <div className="containerBox min-h-screen mt-12">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    console.log(error);
+    return (
+      <div className="containerBox text-2xl font-bold min-h-screen mt-12">
+        <h1>
+          Some <span className="text-destructive">Error</span> occurred
+        </h1>
+      </div>
+    );
+  }
+  if (chapterError) {
+    console.log(chapterError);
+  }
+  if (reviewError) {
+    console.log(reviewError);
+  }
+  return (
+    <div className="min-h-screen mt-12 containerBox">
+      <div className="absolute"></div>
+      <div className="relative z-10 container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
-          {/* Left - Cover */}
           <div className="flex-shrink-0">
-            <div className="w-64 h-80 bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400 rounded-lg shadow-2xl overflow-hidden">
-              {/* Cover content... */}
+            <div className="w-64 h-80 bg-gray-600 rounded-lg shadow-2xl overflow-hidden">
               <div className="w-full h-full flex flex-col items-center justify-center text-white">
-                <div className="text-center mb-4">
-                  <div className="text-yellow-300 text-xl font-bold mb-2">
-                    4人のママの
-                  </div>
-                  <div className="text-lg">せいで</div>
-                  <div className="text-blue-200">俺のラブコメが</div>
-                </div>
                 <img
-                  src="https://i.pinimg.com/1200x/a5/6e/f4/a56ef456eda88242fe7767863620e47b.jpg"
+                  src={data?.image}
                   alt=""
+                  className="w-full border border-border h-full object-cover"
                 />
-                <div className="text-center mt-4">
-                  <div className="text-red-300 text-lg font-bold">
-                    ママちゃんと
-                  </div>
-                  <div className="text-sm">ナックル</div>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Right - Info + Tabs */}
           <div className="flex-1">
-            {/* Title, Subtitle, Author */}
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-              Shadow Slave
+            <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              {data?.title}
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-200 mb-2">
-              Because of Four Moms, My Rom-Coms Turning into a Mom-Com
-            </p>
-            <p className="text-lg text-gray-300 mb-6">Knuckle Curve</p>
 
-            {/* Buttons */}
+            <p className="text-lg italic text-gray-600 mb-6">
+              By: {data?.author.username}
+            </p>
+
             <div className="flex flex-wrap gap-4 mb-6">
-              <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2">
-                <Bookmark className="w-5 h-5" />
-                Add To Library
+              <button
+                onClick={handleToggle}
+                disabled={isToggling}
+                className={`${
+                  isToggling
+                    ? "bg-primary/50 cursor-not-allowed"
+                    : "bg-primary hover:bg-primary/90"
+                } text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2`}
+              >
+                <Bookmark className="w-5 h-5 animate-pulse" />
+                {isToggling
+                  ? "Processing..."
+                  : isBookmarked
+                  ? "Bookmarked"
+                  : "Add To Bookmark"}
               </button>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2">
-                <BookOpen className="w-5 h-5" />
-                Start Reading
-              </button>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-lg">
-                <Bookmark className="w-5 h-5" />
-              </button>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-lg">
-                <Share className="w-5 h-5" />
-              </button>
+
+              <Link to={`/chapter/${id}/1`}>
+                <button className="bg-gray-700 cursor-pointer hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2">
+                  <BookOpen className="w-5 h-5" />
+                  Start Reading
+                </button>
+              </Link>
             </div>
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-2 mb-4">
-              {[
-                "SUGGESTIVE",
-                "COMEDY",
-                "HAREM",
-                "WEBCOMIC",
-                "SLICE OF LIFE",
-                "SUPERNATURAL",
-              ].map((tag) => (
+              {data?.genres.map((tag) => (
                 <span
                   key={tag}
                   className="bg-gray-600 text-white px-3 py-1 rounded-full text-sm"
@@ -90,17 +136,19 @@ export default function NovelPage() {
               ))}
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-300 text-sm">
-                  PUBLICATION: 2025, ONGOING
+                <span className=" text-sm">
+                  PUBLICATION: {getRelativeTime(data?.createdAt ?? "2025")},
+                  <span className="uppercase"> {data?.status}</span>
                 </span>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-6 mb-6 text-gray-300">
+            <div className="flex items-center gap-6 mb-6">
               <div className="flex items-center gap-1">
                 <Star className="w-5 h-5 text-orange-500" />
-                <span className="text-orange-500 font-semibold">7.16</span>
+                <span className="text-orange-500 font-semibold">
+                  {data?.averageRating}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <Bookmark className="w-5 h-5" />
@@ -108,86 +156,97 @@ export default function NovelPage() {
               </div>
               <div className="flex items-center gap-1">
                 <MessageSquare className="w-5 h-5" />
-                <span>14</span>
+                <span>{data?.reviewCount}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Eye className="w-5 h-5" />
-                <span>N/A</span>
+                <span>{data?.views}</span>
               </div>
             </div>
 
-            {/* Description + Tabs */}
             <Tabs defaultValue="description" className="w-full mt-6">
-              <TabsList className="bg-gray-800 rounded-lg p-1 flex space-x-2">
+              <TabsList className="bg-card border rounded-lg p-1 flex space-x-2">
                 <TabsTrigger
                   value="description"
-                  className="text-white data-[state=active]:bg-orange-500 px-4 py-2 rounded"
+                  className=" cursor-pointer data-[state=active]:text-white data-[state=active]:bg-primary px-4 py-2 rounded"
                 >
                   Description
                 </TabsTrigger>
                 <TabsTrigger
                   value="chapters"
-                  className="text-white data-[state=active]:bg-orange-500 px-4 py-2 rounded"
+                  className=" cursor-pointer data-[state=active]:text-white data-[state=active]:bg-primary px-4 py-2 rounded"
                 >
                   Chapters
                 </TabsTrigger>
                 <TabsTrigger
                   value="comments"
-                  className="text-white data-[state=active]:bg-orange-500 px-4 py-2 rounded"
+                  className=" cursor-pointer data-[state=active]:text-white data-[state=active]:bg-primary px-4 py-2 rounded"
                 >
-                  Comments
+                  Reviews
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="description" className="mt-4">
-                <div className="bg-black/30 backdrop-blur-sm rounded-lg p-6">
-                  <p className="text-gray-200 leading-relaxed">
-                    Takumi, a high school boy living with his overly
-                    affectionate, beautiful stepmom and in love with his
-                    childhood friend, is at that age where romance blooms. One
-                    day, his stepmom mysteriously splits into four!? Each
-                    mom—yandere, tsundere, childish, and more—has her own unique
-                    personality and supports (or interferes with) Takumi's love
-                    life in her own way. A heartwarming (?) "mom-com" with four
-                    moms begins!
-                  </p>
+                <div className="bg-card border dark:bg-card rounded-lg p-6">
+                  <h1 className="text-lg font-bold uppercase">
+                    Novel Description:
+                  </h1>
+                  <p className="pt-2">{data?.description}</p>
                 </div>
               </TabsContent>
 
               <TabsContent value="chapters" className="mt-4">
-                <div className="bg-gray-900 rounded-lg p-4 text-white">
-                  <ul className="space-y-2">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <Link to={"/chapter"}>
-                        <li
-                          key={i}
-                          className="border-b border-gray-700 py-2 hover:text-orange-400 cursor-pointer"
-                        >
-                          Chapter {i + 1}: Title of Chapter {i + 1}
-                        </li>
-                      </Link>
-                    ))}
-                  </ul>
+                <div className="bg-card border dark:bg-card rounded-lg p-6 ">
+                  <h1 className="text-lg font-bold uppercase">
+                    List of Chapters:
+                  </h1>
+                  {chapters && chapters.length > 0 ? (
+                    <ul className="space-y-2">
+                      {chapters?.map((chapter) => (
+                        <Link to={`/chapter/${id}/${chapter.chapterNumber}`}>
+                          <li
+                            key={chapter._id}
+                            className="border-b hover:text-primary border-gray-700 py-4 cursor-pointer"
+                          >
+                            Chapter {chapter.chapterNumber}: {chapter.title}
+                          </li>
+                        </Link>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="pt-2">No chapters available!</p>
+                  )}
                 </div>
               </TabsContent>
 
               <TabsContent value="comments" className="mt-4">
-                <div className="bg-gray-900 rounded-lg p-4 text-white">
-                  <p className="mb-2 text-gray-400">User Comments</p>
-                  <ul className="space-y-4">
-                    {[
-                      "Great start!",
-                      "Hilarious!",
-                      "Can’t wait for next chapter",
-                    ].map((comment, idx) => (
-                      <li key={idx} className="border-b border-gray-700 pb-2">
-                        <p className="text-sm">{comment}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          — User {idx + 1}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="bg-card border dark:bg-card rounded-lg p-6">
+                  <div className="flex justify-between items-center gap-3">
+                    <h1 className="text-lg font-bold uppercase">
+                      User Reviews:
+                    </h1>
+                    <div className="flex gap-3 items-center">
+                      <ReviewDialog novelId={id ?? ""} />
+                    </div>
+                  </div>
+                  {reviews && reviews.length > 0 ? (
+                    <ul className="space-y-4">
+                      {reviews?.map((review, idx) => (
+                        <li key={idx} className="border-b border-gray-700 py-2">
+                          <p className="text-md">{review.review} </p>
+                          <p className=" flex items-center italic gap-2 text-gray-500 mt-1">
+                            — {review.user.username}{" "}
+                            <Star className="w-4 h-4 text-orange-500" />
+                            <span className="text-orange-500">
+                              {review.rating}/5
+                            </span>
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="pt-2">No Reviews available!</p>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
