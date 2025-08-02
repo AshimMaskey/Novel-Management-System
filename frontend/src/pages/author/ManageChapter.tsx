@@ -4,6 +4,7 @@ import { useFetchNovelsByAuthorQuery } from "@/features/novel/novelApi";
 import type { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ChapterCount from "./components/ChapterCount";
 
 export default function ManageChapter() {
   const authorId = useSelector(
@@ -60,17 +61,22 @@ export default function ManageChapter() {
                       <span>{novel.title}</span>
                     </td>
                     <td className="px-4 py-2">{novel.status}</td>
-                    <td className="px-4 py-2">10</td>
+                    <td className="px-4 py-2">
+                      <ChapterCount novelId={novel._id} />
+                    </td>
                     <td className="px-4 py-2">{novel.views}</td>
                     <td className="px-4 py-2">
                       <div className="flex flex-wrap gap-2">
-                        <Button
-                          className="text-xs px-4 py-1 h-8"
-                          variant="outline"
-                        >
-                          Manage
-                        </Button>
-                        <Link to={"/author/chapters/add"}>
+                        <Link to={`/author/chapters/manage/${novel._id}`}>
+                          {" "}
+                          <Button
+                            className="text-xs px-4 py-1 h-8"
+                            variant="outline"
+                          >
+                            Manage
+                          </Button>
+                        </Link>
+                        <Link to={`/author/chapters/${novel._id}`}>
                           <Button
                             className="text-xs px-4 py-1 h-8"
                             variant="default"

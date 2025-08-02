@@ -219,3 +219,16 @@ export const handleDeleteChapter = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const handleChapterCount = async (req, res) => {
+  try {
+    const { id: novelId } = req.params;
+    const novel = await Novel.findById(novelId);
+    if (!novel) return res.status(404).json({ message: "Novel not found" });
+    const chapterCount = await Chapter.countDocuments({ novel: novelId });
+    return res.status(200).json({ chapterCount });
+  } catch (error) {
+    console.error("Error in chapter count controller", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

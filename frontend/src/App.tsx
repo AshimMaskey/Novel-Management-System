@@ -36,6 +36,8 @@ import ManageChapter from "./pages/author/ManageChapter";
 import CreateChapter from "./pages/author/CreateChapter";
 import Reviews from "./pages/author/Reviews";
 import NovelReview from "./pages/author/NovelReview";
+import EditChapter from "./pages/author/EditChapter";
+import EditChapterDetails from "./pages/author/EditChapterDetails";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -207,10 +209,26 @@ const App = () => {
             }
           />
           <Route
-            path="/author/chapters/add"
+            path="/author/chapters/:id"
             element={
               <PrivateRoute>
                 <CreateChapter />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/author/chapters/manage/:id"
+            element={
+              <PrivateRoute>
+                <EditChapter />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/author/chapters/edit/:novelId/:chapterNumber"
+            element={
+              <PrivateRoute>
+                <EditChapterDetails />
               </PrivateRoute>
             }
           />
