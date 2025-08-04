@@ -13,6 +13,7 @@ import notificationRoute from "./src/routes/notification.route.js";
 import bookmarkRoute from "./src/routes/bookmark.route.js";
 import reviewRoute from "./src/routes/review.route.js";
 import dashboardRoute from "./src/routes/dashboard.route.js";
+import recommendRoute from "./src/routes/recommend.route.js";
 
 import connectDB from "./src/utils/connectDB.js";
 
@@ -41,6 +42,7 @@ app.use("/api/notification", notificationRoute);
 app.use("/api/bookmarks", bookmarkRoute);
 app.use("/api/review", reviewRoute);
 app.use("/api/dashboard", dashboardRoute);
+app.use("/api/recommend", recommendRoute);
 
 //server start
 const PORT = process.env.PORT || 8080;

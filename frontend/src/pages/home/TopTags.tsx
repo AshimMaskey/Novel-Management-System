@@ -15,7 +15,7 @@ const TopTags = () => {
       <Separator className="mb-4" />
       <div className="flex flex-wrap gap-4">
         {data?.map((tag, index) => (
-          <Link to={`/browse?genre=${tag.name}`}>
+          <Link key={index} to={`/browse?genre=${tag.name}`}>
             <div
               key={index}
               className="bg-card border border-border px-3 py-2 rounded-md hover:cursor-pointer text-blue-600 font-semibold text-sm"

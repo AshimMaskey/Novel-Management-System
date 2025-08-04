@@ -10,17 +10,25 @@ import ReviewDialog from "./ReviewDialog";
 import { useToggleBookmarkMutation } from "@/features/bookmark/bookmarkApi";
 import type { ApiError } from "@/types/error";
 import toast from "react-hot-toast";
-import { useGetUserQuery } from "@/features/auth/authApi";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 export default function NovelPage() {
   const { id } = useParams();
-  const { data: userInfo, refetch: refetchUser } = useGetUserQuery();
+  const userInfo = useSelector((state: RootState) => state.auth.user);
   const bookmarks = userInfo?.bookmarks;
   const isBookmarked = useMemo(
     () => bookmarks?.includes(id ?? ""),
     [bookmarks, id]
   );
+  const [localBookmarked, setLocalBookmarked] = useState<boolean>(
+    isBookmarked ?? false
+  );
+
+  useEffect(() => {
+    setLocalBookmarked(isBookmarked ?? false);
+  }, [isBookmarked]);
 
   const { data, isLoading, error } = useFetchNovelByIdQuery(id ?? "");
   const [toggleBookmark, { isLoading: isToggling }] =
@@ -39,10 +47,14 @@ export default function NovelPage() {
   } = useFetchReviewByNovelIdQuery(id ?? "");
 
   const handleToggle = async () => {
+    if (!userInfo?._id) {
+      toast.error("You need to login to bookmark");
+      return;
+    }
     try {
       const data = await toggleBookmark(id ?? "").unwrap();
       toast.success(data.message ?? "No reply");
-      refetchUser();
+      setLocalBookmarked((prev) => !prev);
     } catch (error) {
       const apiError = error as ApiError;
       toast.error(apiError.data.message ?? "An error occurred!");
@@ -107,12 +119,12 @@ export default function NovelPage() {
                   isToggling
                     ? "bg-primary/50 cursor-not-allowed"
                     : "bg-primary hover:bg-primary/90"
-                } text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2`}
+                } text-white px-8 py-3 cursor-pointer rounded-lg font-semibold flex items-center gap-2`}
               >
                 <Bookmark className="w-5 h-5 animate-pulse" />
                 {isToggling
                   ? "Processing..."
-                  : isBookmarked
+                  : localBookmarked
                   ? "Bookmarked"
                   : "Add To Bookmark"}
               </button>
@@ -149,10 +161,6 @@ export default function NovelPage() {
                 <span className="text-orange-500 font-semibold">
                   {data?.averageRating}
                 </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Bookmark className="w-5 h-5" />
-                <span>13K</span>
               </div>
               <div className="flex items-center gap-1">
                 <MessageSquare className="w-5 h-5" />

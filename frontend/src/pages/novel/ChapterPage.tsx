@@ -93,7 +93,7 @@ export default function ChapterPage() {
 
         <div
           dangerouslySetInnerHTML={{ __html: data?.chapter.content ?? "" }}
-          className="rounded-lg bg-card text-2xl p-4 space-y-4"
+          className="rounded-lg border bg-card text-2xl p-4 space-y-4"
         />
 
         <div className="flex px-4 justify-between my-8">
@@ -135,8 +135,6 @@ export default function ChapterPage() {
               {isCommenting ? "Posing Comment..." : "Post Comment"}
             </Button>
           </form>
-          {isLoadingComment ? <Spinner /> : null}
-
           {isLoadingComment ? (
             <Spinner />
           ) : noComments ? (

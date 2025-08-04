@@ -1,15 +1,17 @@
 import { AuthorSection } from "./AuthorSection";
 import { FeaturedNovels } from "./FeaturedNovels";
 import { HeroSection } from "./HeroSection";
+import RecommendationSection from "./RecommendationSection";
 import TopTags from "./TopTags";
 
 const HomePage = () => {
   return (
     <>
       <HeroSection />
-      <FeaturedNovels />
+      <RecommendationSection />
       <TopTags />
       <AuthorSection />
+      <FeaturedNovels />
     </>
   );
 };

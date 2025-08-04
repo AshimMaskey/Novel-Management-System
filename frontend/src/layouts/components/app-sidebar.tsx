@@ -5,11 +5,13 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 interface AppSidebarProps {
   isAuthor: boolean;
@@ -35,9 +37,15 @@ export function AppSidebar({ isAuthor }: AppSidebarProps) {
 
   return (
     <Sidebar>
+      <SidebarHeader>
+        <Link to={"/"} className="flex items-end gap-2">
+          <img src={logo} className="size-14" />
+          <span className="text-2xl text-primary ">InkTale</span>
+        </Link>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-lg text-primary font-bold">
+          <SidebarGroupLabel className="text-lg mb-2 uppercase font-bold">
             {isAuthor ? "Author Dashboard" : "Admin Dashboard"}
           </SidebarGroupLabel>
           <SidebarGroupContent>

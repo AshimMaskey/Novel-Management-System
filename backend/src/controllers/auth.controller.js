@@ -42,6 +42,27 @@ export const handleSignUp = async (req, res) => {
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
     }
+    const allSameChar = password
+      .split("")
+      .every((char) => char === password[0]);
+
+    function isRepeatingPattern(pwd) {
+      const len = pwd.length;
+      for (let i = 1; i <= len / 2; i++) {
+        const pattern = pwd.slice(0, i);
+        if (pattern.repeat(len / i) === pwd) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (allSameChar || isRepeatingPattern(password)) {
+      return res.status(400).json({
+        message:
+          "Password should not be made of repeated characters or repeating patterns",
+      });
+    }
 
     //password hashing
     const saltRounds = 10;
