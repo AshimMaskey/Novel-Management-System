@@ -108,7 +108,12 @@ export default function NovelPage() {
             </h1>
 
             <p className="text-lg italic text-gray-600 mb-6">
-              By: {data?.author.username}
+              By:{" "}
+              <Link to={`/profile/${data?.author.username}`}>
+                <span className="underline text-primary">
+                  {data?.author.username}
+                </span>
+              </Link>
             </p>
 
             <div className="flex flex-wrap gap-4 mb-6">

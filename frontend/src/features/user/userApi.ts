@@ -21,7 +21,24 @@ export const userApi = createApi({
         method: "GET",
       }),
     }),
+    fetchUser: builder.query<GetUser, string>({
+      query: (username) => ({
+        url: `/profile/${username}`,
+        method: "GET",
+      }),
+    }),
+    fetcchAuthor: builder.query<GetUser, void>({
+      query: () => ({
+        url: `/profile`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useUpdateUserMutation, useFetchUsersQuery } = userApi;
+export const {
+  useUpdateUserMutation,
+  useFetchUsersQuery,
+  useFetchUserQuery,
+  useFetcchAuthorQuery,
+} = userApi;

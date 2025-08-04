@@ -38,6 +38,7 @@ import Reviews from "./pages/author/Reviews";
 import NovelReview from "./pages/author/NovelReview";
 import EditChapter from "./pages/author/EditChapter";
 import EditChapterDetails from "./pages/author/EditChapterDetails";
+import AuthorPage from "./pages/author/AuthorPage";
 const App = () => {
   const { data, error, isLoading, isFetching } = useGetUserQuery();
   const dispatch = useDispatch();
@@ -89,6 +90,7 @@ const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/novel/:id" element={<NovelPage />} />
+          <Route path="/profile/:username" element={<AuthorPage />} />
           <Route
             path="/chapter/:novelId/:chapterNumber"
             element={<ChapterPage />}

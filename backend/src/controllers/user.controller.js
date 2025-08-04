@@ -157,3 +157,43 @@ export const handleGetUsers = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getRandomAuthor = async (req, res) => {
+  try {
+    const author = await User.aggregate([
+      {
+        $match: { role: { $in: ["author", "admin"] } },
+      },
+      {
+        $lookup: {
+          from: "novels",
+          localField: "_id",
+          foreignField: "author",
+          as: "novels",
+        },
+      },
+      {
+        $match: {
+          "novels.0": { $exists: true },
+        },
+      },
+      {
+        $sample: { size: 1 },
+      },
+      {
+        $project: {
+          password: 0,
+        },
+      },
+    ]);
+
+    if (!author || author.length === 0) {
+      return res.status(404).json({ message: "No authors with novels found" });
+    }
+
+    return res.status(200).json(author[0]);
+  } catch (error) {
+    console.error("Error fetching random author:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

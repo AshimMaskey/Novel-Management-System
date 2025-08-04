@@ -48,10 +48,10 @@ const ProfilePage = () => {
           <div className="flex justify-between text-lg mt-5">
             <EditModal user={User} />
             <div>
-              <Button variant={"outline"}>
+              {/* <Button variant={"outline"}>
                 <CiUser />
                 <span className="ml-1 hidden sm:flex">Followers</span>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

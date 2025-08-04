@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getRandomAuthor,
   handleChangePassword,
   handleFollowUnfollowUser,
   handleGetUserProfile,
@@ -13,6 +14,7 @@ import authorize from "../middlewares/authorize.js";
 
 const router = express.Router();
 
+router.get("/profile", getRandomAuthor);
 router.get("/profile/:username", handleGetUserProfile);
 router.patch(
   "/followUnfollow/:id",

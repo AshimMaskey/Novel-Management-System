@@ -5,7 +5,7 @@ import { useFetchRecommendedNovelsQuery } from "@/features/recommend/recommendAp
 
 export default function RecommendationSection() {
   const { data, isLoading, error } = useFetchRecommendedNovelsQuery();
-  console.log(data);
+
   if (error) {
     console.log(error);
   }
