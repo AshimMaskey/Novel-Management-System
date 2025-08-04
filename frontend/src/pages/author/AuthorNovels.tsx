@@ -80,9 +80,12 @@ const AuthorNovels = () => {
                 <h3 className="text-lg font-semibold">{novel.title}</h3>
                 <p className="text-sm text-gray-500 mb-2">{novel.status}</p>
                 <div className="flex items-center justify-between text-sm">
-                  <a href="" className="text-primary hover:underline">
+                  <Link
+                    to={`/novel/${novel._id}`}
+                    className="text-primary hover:underline"
+                  >
                     Read More →
-                  </a>
+                  </Link>
                   <div className="flex gap-2 items-center">
                     <EditNovelModal novel={novel} availableGenres={genres} />
                     <button

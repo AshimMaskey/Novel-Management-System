@@ -5,6 +5,13 @@ import { useGetChapterQuery } from "@/features/chapter/chapterApi";
 import Spinner from "@/components/ui/Spinner";
 import getRelativeTime from "@/utils/convertTime";
 import { Button } from "@/components/ui/button";
+import {
+  useCreateCommentMutation,
+  useGetCommentsByChapterQuery,
+} from "@/features/comment/commentApi";
+import CommentCard from "./component/Comment";
+import type { ApiError } from "@/types/error";
+import toast from "react-hot-toast";
 
 export default function ChapterPage() {
   const { novelId, chapterNumber } = useParams();
@@ -13,16 +20,45 @@ export default function ChapterPage() {
     novelId: novelId ? novelId : "",
     chapterNumber: chapterNumber ? parseInt(chapterNumber) : 1,
   });
+  const {
+    data: commentData,
+    isLoading: isLoadingComment,
+    error: errorComment,
+    isError: isCommentError,
+  } = useGetCommentsByChapterQuery(data?.chapter._id ?? "");
 
-  const [comments, setComments] = useState<string[]>([]);
+  const noComments =
+    isCommentError &&
+    "status" in errorComment &&
+    (errorComment.status === 404 || errorComment.status === "FETCH_ERROR");
+
+  const [createComment, { isLoading: isCommenting }] =
+    useCreateCommentMutation();
+
   const [newComment, setNewComment] = useState("");
 
-  const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newComment.trim() === "") return;
-    setComments([...comments, newComment]);
-    setNewComment("");
+    try {
+      await createComment({
+        novelId: novelId ? novelId : "",
+        chapterId: data ? data.chapter._id : "",
+        spoiler: false,
+        content: newComment,
+      }).unwrap();
+      toast.success("Comment posted successfully!");
+      setNewComment("");
+    } catch (error) {
+      const apiError = error as ApiError;
+      console.log(apiError);
+      toast.error(apiError.data.message ?? "An error occurred!");
+    }
   };
+
+  if (errorComment) {
+    console.log(errorComment);
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen containerBox mt-12">
@@ -57,7 +93,7 @@ export default function ChapterPage() {
 
         <div
           dangerouslySetInnerHTML={{ __html: data?.chapter.content ?? "" }}
-          className="rounded-lg px-4 space-y-4"
+          className="rounded-lg bg-card text-2xl p-4 space-y-4"
         />
 
         <div className="flex px-4 justify-between my-8">
@@ -79,7 +115,7 @@ export default function ChapterPage() {
           </Button>
         </div>
 
-        <div className="bg-card border-2 rounded-lg p-6">
+        <div className="bg-card border rounded-lg p-6">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <MessageSquare className="w-5 h-5" /> Comments
           </h2>
@@ -88,33 +124,29 @@ export default function ChapterPage() {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="w-full p-3 rounded-lg border-2 resize-none"
+              className="w-full bg-white dark:bg-card dark:text-white p-3 rounded-lg border resize-none"
               rows={4}
               placeholder="Leave your thoughts..."
             ></textarea>
-            <Button className="bg-green-600 hover:bg-green-700 duration-300">
-              Post Comment
+            <Button
+              disabled={isCommenting}
+              className="bg-green-600 mt-3 ml-1 hover:bg-green-700 duration-300"
+            >
+              {isCommenting ? "Posing Comment..." : "Post Comment"}
             </Button>
           </form>
+          {isLoadingComment ? <Spinner /> : null}
 
-          {comments.length === 0 ? (
-            <p className="text-gray-400">No comments yet. Be the first!</p>
+          {isLoadingComment ? (
+            <Spinner />
+          ) : noComments ? (
+            <p className="text-gray-400 ml-2">No comments yet. Be the first!</p>
+          ) : commentData?.length === 0 ? (
+            <p className="text-gray-400 ml-2">No comments yet. Be the first!</p>
           ) : (
             <ul className="space-y-4">
-              {comments.map((comment, index) => (
-                <li key={index} className="flex gap-3 border-2 p-4 rounded-lg">
-                  <div className="flex-shrink-0">
-                    <img
-                      src="https://api.dicebear.com/7.x/thumbs/svg?seed=User"
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm">User{index + 1}</p>
-                    <p className="text-sm mt-1">{comment}</p>
-                  </div>
-                </li>
+              {commentData?.map((comment) => (
+                <CommentCard key={comment._id} comment={comment} />
               ))}
             </ul>
           )}
