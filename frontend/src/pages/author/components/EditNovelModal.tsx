@@ -59,6 +59,20 @@ const EditNovelModal = ({ novel, availableGenres }: EditNovelModalProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const validTypes = ["image/jpeg", "image/png"];
+      const maxSizeMB = 10;
+
+      if (!validTypes.includes(file.type)) {
+        toast.error("Only JPEG, PNG images are allowed.");
+        e.target.value = "";
+        return;
+      }
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        toast.error(`Image must be smaller than ${maxSizeMB} MB.`);
+        e.target.value = "";
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         image: file,

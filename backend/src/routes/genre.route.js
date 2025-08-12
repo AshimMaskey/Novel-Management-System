@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", verifyToken, authorize("admin"), handleCreateGenre);
+router.post("/", verifyToken, handleCreateGenre);
 router.patch("/:id", verifyToken, authorize("admin"), checkId, handleEditGenre);
 router.delete(
   "/:id",

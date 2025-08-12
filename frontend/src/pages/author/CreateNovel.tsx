@@ -29,10 +29,12 @@ export default function CreateNovel() {
       setSelectedGenres([...selectedGenres, genre]);
     }
   };
+
   if (isLoading) return <Spinner />;
   if (error) {
     console.log("An error occurred", error);
   }
+
   const genres = data?.map((genre) => genre.name);
 
   const handleCancel = () => {
@@ -47,14 +49,18 @@ export default function CreateNovel() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!image) {
+      toast.error("Please upload a cover image.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-
-    if (image) {
-      formData.append("image", image);
-    }
+    formData.append("image", image);
     formData.append("genres", JSON.stringify(selectedGenres));
+
     try {
       await createNovel(formData).unwrap();
       handleCancel();
@@ -63,6 +69,27 @@ export default function CreateNovel() {
       const apiError = error as ApiError;
       console.log(apiError);
       toast.error(apiError?.data?.message ?? "An error occurred");
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validTypes = ["image/jpeg", "image/png"];
+      const maxSizeMB = 10;
+
+      if (!validTypes.includes(file.type)) {
+        toast.error("Only JPEG, PNG images are allowed.");
+        e.target.value = "";
+        return;
+      }
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        toast.error(`Image must be smaller than ${maxSizeMB} MB.`);
+        e.target.value = "";
+        return;
+      }
+
+      setImage(file);
     }
   };
 
@@ -110,10 +137,7 @@ export default function CreateNovel() {
             id="image"
             type="file"
             accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) setImage(file);
-            }}
+            onChange={handleImageChange}
           />
         </div>
 
@@ -135,6 +159,7 @@ export default function CreateNovel() {
             ))}
           </div>
         </div>
+
         <div className="flex justify-end gap-4 w-full">
           <Button type="button" onClick={handleCancel} variant="outline">
             Clear

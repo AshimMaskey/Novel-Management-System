@@ -123,7 +123,7 @@ const Genre = () => {
             </DialogHeader>
 
             <Input
-              className="border-2 mb-4"
+              className="border-2 border-border mb-4"
               id="name"
               placeholder="Enter genre name"
               value={genreName}

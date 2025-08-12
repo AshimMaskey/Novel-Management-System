@@ -30,6 +30,7 @@ const authorItems = [
   { title: "Create Novel", icon: Plus, url: "/author/create" },
   { title: "Manage Chapter", icon: FileText, url: "/author/chapters" },
   { title: "Reviews", icon: Star, url: "/author/reviews" },
+  { title: "Genre", icon: Tag, url: "/author/genre" },
 ];
 
 export function AppSidebar({ isAuthor }: AppSidebarProps) {

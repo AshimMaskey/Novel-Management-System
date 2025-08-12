@@ -206,6 +206,14 @@ const App = () => {
             }
           />
           <Route
+            path="/author/genre"
+            element={
+              <PrivateRoute>
+                <Genre />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/author/reviews/:id"
             element={
               <PrivateRoute>

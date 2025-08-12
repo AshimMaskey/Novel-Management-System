@@ -1,11 +1,33 @@
-import { Star, BookOpen, MessageSquare, Eye, Bookmark } from "lucide-react";
+import {
+  Star,
+  BookOpen,
+  MessageSquare,
+  Eye,
+  Bookmark,
+  Edit2,
+  Trash2,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useParams } from "react-router-dom";
 import { useFetchNovelByIdQuery } from "@/features/novel/novelApi";
 import Spinner from "@/components/ui/Spinner";
 import getRelativeTime from "@/utils/convertTime";
 import { useGetAllChaptersQuery } from "@/features/chapter/chapterApi";
-import { useFetchReviewByNovelIdQuery } from "@/features/review/reviewApi";
+import {
+  useFetchReviewByNovelIdQuery,
+  useDeleteReviewMutation,
+  useUpdateReviewMutation,
+} from "@/features/review/reviewApi";
 import ReviewDialog from "./ReviewDialog";
 import { useToggleBookmarkMutation } from "@/features/bookmark/bookmarkApi";
 import type { ApiError } from "@/types/error";
@@ -13,6 +35,7 @@ import toast from "react-hot-toast";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import type { GetReviewType } from "@/types/review";
 
 export default function NovelPage() {
   const { id } = useParams();
@@ -25,10 +48,6 @@ export default function NovelPage() {
   const [localBookmarked, setLocalBookmarked] = useState<boolean>(
     isBookmarked ?? false
   );
-
-  useEffect(() => {
-    setLocalBookmarked(isBookmarked ?? false);
-  }, [isBookmarked]);
 
   const { data, isLoading, error } = useFetchNovelByIdQuery(id ?? "");
   const [toggleBookmark, { isLoading: isToggling }] =
@@ -46,6 +65,19 @@ export default function NovelPage() {
     error: reviewError,
   } = useFetchReviewByNovelIdQuery(id ?? "");
 
+  const [updateReview] = useUpdateReviewMutation();
+  const [deleteReview] = useDeleteReviewMutation();
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const [editRating, setEditRating] = useState(5);
+
+  useEffect(() => {
+    setLocalBookmarked(isBookmarked ?? false);
+  }, [isBookmarked]);
+
   const handleToggle = async () => {
     if (!userInfo?._id) {
       toast.error("You need to login to bookmark");
@@ -58,6 +90,47 @@ export default function NovelPage() {
     } catch (error) {
       const apiError = error as ApiError;
       toast.error(apiError.data.message ?? "An error occurred!");
+    }
+  };
+
+  const openEditModal = (review: GetReviewType) => {
+    setCurrentReviewId(review._id);
+    setEditText(review.review);
+    setEditRating(review.rating);
+    setIsEditOpen(true);
+  };
+
+  const openDeleteModal = (reviewId: string) => {
+    setCurrentReviewId(reviewId);
+    setIsDeleteOpen(true);
+  };
+
+  const handleUpdate = async () => {
+    if (!currentReviewId) return;
+    try {
+      await updateReview({
+        id: currentReviewId,
+        updateData: { review: editText, rating: editRating },
+      }).unwrap();
+      toast.success("Review updated successfully");
+      setIsEditOpen(false);
+      setCurrentReviewId(null);
+    } catch (error) {
+      const apiError = error as ApiError;
+      toast.error(apiError.data?.message ?? "Failed to update review");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!currentReviewId) return;
+    try {
+      await deleteReview(currentReviewId).unwrap();
+      toast.success("Review deleted successfully");
+      setIsDeleteOpen(false);
+      setCurrentReviewId(null);
+    } catch (error) {
+      const apiError = error as ApiError;
+      toast.error(apiError.data?.message ?? "Failed to delete review");
     }
   };
 
@@ -85,6 +158,7 @@ export default function NovelPage() {
   if (reviewError) {
     console.log(reviewError);
   }
+
   return (
     <div className="min-h-screen mt-12 containerBox">
       <div className="absolute"></div>
@@ -216,11 +290,11 @@ export default function NovelPage() {
                   {chapters && chapters.length > 0 ? (
                     <ul className="space-y-2">
                       {chapters?.map((chapter) => (
-                        <Link to={`/chapter/${id}/${chapter.chapterNumber}`}>
-                          <li
-                            key={chapter._id}
-                            className="border-b hover:text-primary border-gray-700 py-4 cursor-pointer"
-                          >
+                        <Link
+                          to={`/chapter/${id}/${chapter.chapterNumber}`}
+                          key={chapter._id}
+                        >
+                          <li className="border-b hover:text-primary border-gray-700 py-4 cursor-pointer">
                             Chapter {chapter.chapterNumber}: {chapter.title}
                           </li>
                         </Link>
@@ -242,20 +316,48 @@ export default function NovelPage() {
                       <ReviewDialog novelId={id ?? ""} />
                     </div>
                   </div>
+
                   {reviews && reviews.length > 0 ? (
                     <ul className="space-y-4">
-                      {reviews?.map((review, idx) => (
-                        <li key={idx} className="border-b border-gray-700 py-2">
-                          <p className="text-md">{review.review} </p>
-                          <p className=" flex items-center italic gap-2 text-gray-500 mt-1">
-                            — {review.user.username}{" "}
-                            <Star className="w-4 h-4 text-orange-500" />
-                            <span className="text-orange-500">
-                              {review.rating}/5
-                            </span>
-                          </p>
-                        </li>
-                      ))}
+                      {reviews.map((review: GetReviewType) => {
+                        const isAuthor = userInfo?._id === review.user._id;
+                        return (
+                          <li
+                            key={review._id}
+                            className="border-b border-gray-700 py-2 flex justify-between items-start"
+                          >
+                            <div>
+                              <p className="text-md">{review.review}</p>
+                              <p className="flex items-center italic gap-2 text-gray-500 mt-1">
+                                — {review.user.username}{" "}
+                                <Star className="w-4 h-4 text-orange-500" />
+                                <span className="text-orange-500">
+                                  {review.rating}/5
+                                </span>
+                              </p>
+                            </div>
+
+                            {isAuthor && (
+                              <div className="flex gap-3">
+                                <button
+                                  aria-label="Edit Review"
+                                  onClick={() => openEditModal(review)}
+                                  className="text-blue-500 cursor-pointer hover:text-blue-700"
+                                >
+                                  <Edit2 className="w-5 h-5" />
+                                </button>
+                                <button
+                                  aria-label="Delete Review"
+                                  onClick={() => openDeleteModal(review._id)}
+                                  className="text-red-600 cursor-pointer hover:text-red-800"
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </button>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   ) : (
                     <p className="pt-2">No Reviews available!</p>
@@ -266,6 +368,66 @@ export default function NovelPage() {
           </div>
         </div>
       </div>
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Review</DialogTitle>
+            <DialogDescription>
+              Update your review and rating here.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Textarea
+              className="border border-border"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              placeholder="Write your review..."
+              rows={4}
+            />
+            <div>
+              <label className="block mb-1 font-medium">Rating (1-5):</label>
+              <div className="flex space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`cursor-pointer transition-colors ${
+                      star <= editRating ? "text-yellow-400" : "text-gray-400"
+                    }`}
+                    onClick={() => setEditRating(star)}
+                    size={24}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdate}>Update</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Review</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this review? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-4">
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
