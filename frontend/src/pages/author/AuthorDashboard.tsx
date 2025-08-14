@@ -2,7 +2,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { CardHeader } from "@/components/ui/card1";
 import Spinner from "@/components/ui/Spinner";
 import { useAuthorDashboardQuery } from "@/features/admin/adminApi";
-import { BarChart, BookOpen, MessageSquare, Star, Users } from "lucide-react";
+import { BarChart, BookOpen, MessageSquare, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AuthorDashboard = () => {
@@ -12,16 +12,16 @@ const AuthorDashboard = () => {
     console.log(error);
   }
   const dashboardData = [
-    {
-      title: "Followers",
-      value: data?.followersCount ?? 0,
-      description: "Users following you",
-      icon: Users,
-      link: "",
-    },
+    // {
+    //   title: "Followers",
+    //   value: data?.followersCount ?? 0,
+    //   description: "Users following you",
+    //   icon: Users,
+    //   link: "",
+    // },
     {
       title: "Novels",
-      value: data?.followersCount ?? 0,
+      value: data?.novelsCount ?? 0,
       description: "Your novels",
       icon: BookOpen,
       link: "/author/novels",
