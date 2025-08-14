@@ -104,24 +104,24 @@ const ChapterCreator = () => {
           {/* Rich Text Editor */}
           <div className="border border-gray-300 rounded-lg">
             {/* Toolbar */}
-            <div className="bg-gray-50 border-b border-gray-300 p-2 flex gap-1">
+            <div className="bg-card rounded-2xl border-b border-gray-300 p-2 flex gap-1">
               <button
                 onClick={() => execCommand("bold")}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                 title="Bold"
               >
                 <Bold size={16} />
               </button>
               <button
                 onClick={() => execCommand("italic")}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                 title="Italic"
               >
                 <Italic size={16} />
               </button>
               <button
                 onClick={() => execCommand("underline")}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
                 title="Underline"
               >
                 <Underline size={16} />
