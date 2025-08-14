@@ -25,7 +25,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://novel-management-system-frontend.vercel.app/",
+      "https://novel-management-system-frontend.vercel.app",
     ],
     credentials: true,
   })
