@@ -148,7 +148,11 @@ export const handleLogin = async (req, res) => {
 
 export const handleLogout = async (req, res) => {
   try {
-    res.clearCookie("jwt");
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Error in handleLogout controller: ", error);
