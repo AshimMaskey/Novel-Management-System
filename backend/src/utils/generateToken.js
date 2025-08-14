@@ -6,6 +6,9 @@ const generateTokenAndSetCookie = async (res, userId) => {
     });
 
     res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   } catch (error) {
