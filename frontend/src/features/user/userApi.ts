@@ -33,6 +33,12 @@ export const userApi = createApi({
         method: "GET",
       }),
     }),
+    deleteUser: builder.mutation<{ message: string }, string>({
+      query: (userId) => ({
+        url: `delete/${userId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -41,4 +47,5 @@ export const {
   useFetchUsersQuery,
   useFetchUserQuery,
   useFetcchAuthorQuery,
+  useDeleteUserMutation,
 } = userApi;

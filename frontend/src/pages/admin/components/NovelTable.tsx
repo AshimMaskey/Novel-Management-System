@@ -12,6 +12,7 @@ import { Eye, Trash } from "lucide-react";
 import type { NovelType } from "@/types/novel";
 import getRelativeTime from "@/utils/convertTime";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Link } from "react-router-dom";
 
 type NovelTableProps = {
   data: NovelType[];
@@ -74,7 +75,9 @@ export default function NovelTable({
               <TableCell>{getRelativeTime(novel.createdAt)}</TableCell>
               <TableCell>
                 <Button size="icon" variant="ghost" disabled={isDeleting}>
-                  <Eye className="size-4" />
+                  <Link to={`/novel/${novel._id}`}>
+                    <Eye className="size-4" />
+                  </Link>
                 </Button>
                 <Button
                   size="icon"

@@ -2,6 +2,7 @@ import express from "express";
 import {
   getRandomAuthor,
   handleChangePassword,
+  handleDeleteUser,
   handleFollowUnfollowUser,
   handleGetUserProfile,
   handleGetUsers,
@@ -30,5 +31,6 @@ router.patch(
 );
 router.patch("/changePassword", verifyToken, handleChangePassword);
 router.get("/profiles", verifyToken, authorize("admin"), handleGetUsers);
+router.delete("/delete/:id", verifyToken, checkId, handleDeleteUser);
 
 export default router;

@@ -11,8 +11,6 @@ const router = express.Router();
 router
   .route("/adminDashboard")
   .get(verifyToken, authorize("admin"), fetchAdminDashboard);
-router
-  .route("/authorDashboard")
-  .get(verifyToken, authorize("author"), fetchAuthorDashboard);
+router.route("/authorDashboard").get(verifyToken, fetchAuthorDashboard);
 
 export default router;

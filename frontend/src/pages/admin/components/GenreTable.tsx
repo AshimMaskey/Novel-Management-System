@@ -46,8 +46,6 @@ export default function GenreTable({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-700">Manage Genres</h1>
-
       {!data || data.length === 0 ? (
         <div className="border border-dashed border-gray-300 p-6 rounded-md text-center text-gray-500">
           No genres available.

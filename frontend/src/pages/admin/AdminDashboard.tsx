@@ -44,28 +44,28 @@ const AdminDashboard = () => {
       value: data?.authorsCount ?? 0,
       description: "Active content creators",
       icon: UserCheck,
-      link: "/admin/authors",
+      link: "/admin/users",
     },
     {
       title: "Admins",
       value: data?.adminCount ?? 0,
       description: "Platform administrators",
       icon: ShieldCheck,
-      link: "/admin/admins",
+      link: "/admin/users",
     },
     {
       title: "Comments",
       value: data?.commentsCount ?? 0,
       description: "User comments on novels",
       icon: MessageSquare,
-      link: "/admin/comments",
+      link: "",
     },
     {
       title: "Genres",
       value: data?.genresCount ?? 0,
       description: "Available genres",
       icon: BookMarked,
-      link: "/admin/genres",
+      link: "/admin/genre",
     },
   ];
 
