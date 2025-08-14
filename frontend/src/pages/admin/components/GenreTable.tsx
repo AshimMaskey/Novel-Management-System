@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import type { GenreType } from "@/types/genre";
 import getRelativeTime from "@/utils/convertTime";
-import { Pencil, Trash } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type PaginatedTableProps = {
@@ -46,43 +45,58 @@ export default function GenreTable({
   };
 
   return (
-    <div className="space-y-4">
-      <Table className="border-muted border-2">
-        <TableHeader>
-          <TableRow className="bg-gray-100 dark:bg-gray-900">
-            <TableHead>SN</TableHead>
-            <TableHead>Genre Name</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedData.map((genre, index) => (
-            <TableRow key={genre._id}>
-              <TableCell>{(page - 1) * itemsPerPage + index + 1}</TableCell>
-              <TableCell>{genre.name}</TableCell>
-              <TableCell>{getRelativeTime(genre.createdAt)}</TableCell>
-              <TableCell>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => onEdit?.(genre)}
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold text-gray-700">Manage Genres</h1>
+
+      {!data || data.length === 0 ? (
+        <div className="border border-dashed border-gray-300 p-6 rounded-md text-center text-gray-500">
+          No genres available.
+        </div>
+      ) : (
+        <div className="w-full overflow-x-auto rounded-xl border p-4 shadow-sm ">
+          <Table className="w-full text-left text-sm table-auto">
+            <TableHeader>
+              <TableRow className="text-muted-foreground border-b bg-gray-100 dark:bg-gray-900">
+                <TableHead>SN</TableHead>
+                <TableHead>Genre Name</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((genre, index) => (
+                <TableRow
+                  key={genre._id}
+                  className="border-b hover:bg-muted/20"
                 >
-                  <Pencil className="size-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setGenreToDelete(genre)}
-                  disabled={isDeleting}
-                >
-                  <Trash className="size-4 text-red-500" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                  <TableCell>{(page - 1) * itemsPerPage + index + 1}</TableCell>
+                  <TableCell>{genre.name}</TableCell>
+                  <TableCell>{getRelativeTime(genre.createdAt)}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => onEdit?.(genre)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setGenreToDelete(genre)}
+                        disabled={isDeleting}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <div className="flex justify-between items-center">
         <Button
